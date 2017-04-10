@@ -15,6 +15,7 @@ def calculate_Unigrams():
     wordsTotal = 0
     #all of bigrams will be there in that var
     bigrams={}
+    frequencyOfEachWord={}
 
     for name in filesENG:
         with open(mypathENG + '\\' + name, encoding="utf8") as f:
@@ -23,18 +24,26 @@ def calculate_Unigrams():
             # Counting words for every file and su,,arize it with previous value - testset_literature
             wordsTotal = wordsTotal + len(words)
 
-        #calculating Bigrams
+        #Calculating P(word) - frequency at corpus - START
+        for everyElement in words:
+         if everyElement in frequencyOfEachWord.keys():
+            frequencyOfEachWord[everyElement]+=1
+         else:
+            frequencyOfEachWord[everyElement]=1
+        #Calculating P(word) - frequency at corpus - END
+
+        #calculating Bigrams P(word1, word2) in ENG start
         with open (mypathENG + '\\' + name, encoding="utf8") as myfile:
             data=myfile.readlines()
             newBigrams=[b for l in data for b in zip(l.split()[:-1], l.split()[1:])]
-
+        #Bigram adding
         for everyElement in newBigrams:
          if everyElement in bigrams.keys():
             bigrams[everyElement]+=1
          else:
-            bigrams[everyElement]=0
+            bigrams[everyElement]=1
 
-
+     #calculating Bigrams in HEB start
     for name in filesHEB:
         with open(mypathHEB + '\\' + name, encoding="utf8") as f:
             words = [word for line in f for word in line.split()]
@@ -42,7 +51,15 @@ def calculate_Unigrams():
             # Counting words for every file and su,,arize it with previous value - haaretz.heb
             wordsTotal = wordsTotal + len(words)
 
-        #calculating Bigrams
+        #Calculating P(word) - frequency at corpus - START
+        for everyElement in words:
+         if everyElement in frequencyOfEachWord.keys():
+            frequencyOfEachWord[everyElement]+=1
+         else:
+            frequencyOfEachWord[everyElement]=1
+        #Calculating P(word) - frequency at corpus - END
+
+        #calculating Bigrams P(word1, word2) in HEB start
         with open (mypathHEB + '\\' + name, encoding="utf8") as myfile2:
             data2=myfile2.readlines()
             newBigrams = [b for l in data2 for b in zip(l.split()[:-1], l.split()[1:])]
@@ -50,7 +67,7 @@ def calculate_Unigrams():
          if everyElement in bigrams.keys():
             bigrams[everyElement]+=1
          else:
-            bigrams[everyElement]=0
+            bigrams[everyElement]=1
 
     #unigrams - returns number of all words at all corpuses
     return wordsTotal
@@ -58,6 +75,3 @@ pass
 
 if __name__ == "__main__":
     print(calculate_Unigrams())
-
-
-
