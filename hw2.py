@@ -1,9 +1,24 @@
-import sys,os
+import sys,os,math
 from os import listdir
 from os.path import isfile, join
 from collections import Counter
 import numpy as np
 
+bigrams={}
+frequencyOfEachWord={}
+pmiResults={}
+wordsTotal=0
+
+def calculatePMI():
+ global pmiResults
+ global wordsTotal
+#PMI(x,y) = log(P(xy)/P(x)*P(y) * 1000
+ for everyElement in bigrams:
+   Pxy=bigrams[everyElement]
+   Px=frequencyOfEachWord[everyElement[0]]
+   Py=frequencyOfEachWord[everyElement[1]]
+   PMI=math.log((Pxy/Px*Py),2)*1000/wordsTotal
+   pmiResults[everyElement]=PMI
 
 def calculate_Unigrams():
     # Define paths to corpuses
@@ -12,10 +27,11 @@ def calculate_Unigrams():
     filesENG = [f for f in listdir(mypathENG) if isfile(os.path.join(mypathENG, f))]
     filesHEB = [f for f in listdir(mypathHEB) if isfile(os.path.join(mypathHEB, f))]
     # unigrams - counter for all words in corpuses
-    wordsTotal = 0
+    #wordsTotal = 0
     #all of bigrams will be there in that var
-    bigrams={}
-    frequencyOfEachWord={}
+    global bigrams
+    global frequencyOfEachWord
+    global wordsTotal
 
     for name in filesENG:
         with open(mypathENG + '\\' + name, encoding="utf8") as f:
@@ -75,3 +91,6 @@ pass
 
 if __name__ == "__main__":
     print(calculate_Unigrams())
+    calculatePMI()
+    for key, value in pmiResults.items():
+        print(key,value)
