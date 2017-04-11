@@ -9,13 +9,14 @@ pmiResults={}
 tTestResults={}
 X2TestResults={}
 wordsTotal=0 # unigrams - counter for all words in corpuses
+bigramsTotal=0 # bigrams - counter for all bigrams in corpuses
 
-def calculateX2Test(): #x = [ P(xy)-P(x)P(y) ] / [P(x)P(y)]
+def calculateX2TestBigrams(): #x = [ P(xy)-P(x)P(y) ] / [P(x)P(y)]
  global X2TestResults
  for everyElement in bigrams:
-   Pxy=bigrams[everyElement]
-   Px=frequencyOfEachWord[everyElement[0]]
-   Py=frequencyOfEachWord[everyElement[1]]
+   Pxy=bigrams[everyElement]/bigramsTotal
+   Px=frequencyOfEachWord[everyElement[0]]/wordsTotal
+   Py=frequencyOfEachWord[everyElement[1]]/wordsTotal
    x2Test=(Pxy-Px*Py)/Px*Py
    X2TestResults[everyElement]=x2Test
  # saving: xtest_pair.txt
@@ -24,12 +25,12 @@ def calculateX2Test(): #x = [ P(xy)-P(x)P(y) ] / [P(x)P(y)]
      file.write(str(key)+" "+str(value))
  file.close()
 
-def calculateTtest(): #t = [ P(xy)-P(x)P(y) ] / [sqrt(P(xy)/N)    N=wordsTotal
+def calculateTtestBigrams(): #t = [ P(xy)-P(x)P(y) ] / [sqrt(P(xy)/N)    N=wordsTotal
  global tTestResults
  for everyElement in bigrams:
-   Pxy=bigrams[everyElement]
-   Px=frequencyOfEachWord[everyElement[0]]
-   Py=frequencyOfEachWord[everyElement[1]]
+   Pxy=bigrams[everyElement]/bigramsTotal
+   Px=frequencyOfEachWord[everyElement[0]]/wordsTotal
+   Py=frequencyOfEachWord[everyElement[1]]/wordsTotal
    tTest=(Pxy-Px*Py)/math.sqrt(Pxy)/wordsTotal
    tTestResults[everyElement]=tTest
  # saving: ttest_pair.txt
@@ -38,13 +39,13 @@ def calculateTtest(): #t = [ P(xy)-P(x)P(y) ] / [sqrt(P(xy)/N)    N=wordsTotal
      file.write(str(key)+" "+str(value))
  file.close()
 
-def calculatePMI(): #PMI(x,y) = log(P(xy)/P(x)*P(y) * 1000/N      N=wordsTotal
+def calculatePMIBigrams(): #PMI(x,y) = log(P(xy)/P(x)*P(y)
  global pmiResults
  for everyElement in bigrams:
-   Pxy=bigrams[everyElement]
-   Px=frequencyOfEachWord[everyElement[0]]
-   Py=frequencyOfEachWord[everyElement[1]]
-   PMI=math.log((Pxy/Px*Py),2)*1000/wordsTotal
+   Pxy=bigrams[everyElement]/bigramsTotal
+   Px=frequencyOfEachWord[everyElement[0]]/wordsTotal
+   Py=frequencyOfEachWord[everyElement[1]]/wordsTotal
+   PMI=math.log((Pxy/Px*Py),2)
    pmiResults[everyElement]=PMI
  # saving: pmi_pair.txt
  file = io.open('pmi_pair.txt', 'w+', encoding='utf8')
@@ -56,6 +57,7 @@ def calculate_Unigrams(argv):
     global bigrams
     global frequencyOfEachWord
     global wordsTotal
+    global bigramsTotal
     # Define paths to corpuses: sys.argv[1] = r'C:\Temp\NLP\testset_literature' sys.argv[2] = r'C:\Temp\NLP\haaretz.heb'
     filesENG = [f for f in listdir(sys.argv[1]) if isfile(os.path.join(sys.argv[1], f))]
     filesHEB = [f for f in listdir(sys.argv[2]) if isfile(os.path.join(sys.argv[2], f))]
@@ -73,6 +75,7 @@ def calculate_Unigrams(argv):
             frequencyOfEachWord[everyElement]+=1
          else:
             frequencyOfEachWord[everyElement]=1
+            bigramsTotal+=1
         #Calculating P(word) - frequency at corpus - END
 
         #calculating Bigrams P(word1, word2) in 1st corpus: start
@@ -99,6 +102,7 @@ def calculate_Unigrams(argv):
             frequencyOfEachWord[everyElement]+=1
          else:
             frequencyOfEachWord[everyElement]=1
+            bigramsTotal+=1
         #Calculating P(word) - frequency at corpus - END
 
         #calculating Bigrams P(word1, word2) in 2nd corpus: start
@@ -113,7 +117,7 @@ def calculate_Unigrams(argv):
     # saving: freq_raw.txt
     file = io.open('freq_raw.txt', 'w+', encoding='utf8')
     for key,value in bigrams.items():
-     file.write(str(key)+" "+str(value))
+     file.write(str(key)+" "+str((value/wordsTotal)*1000)) #multiply by 1000
     file.close()
     #unigrams - returns number of all words at all corpuses
     return wordsTotal
@@ -127,12 +131,12 @@ if len(sys.argv) != 4:
 
 if __name__ == "__main__":
     calculate_Unigrams(sys.argv)
-    calculatePMI()
+    calculatePMIBigrams()
     #for key, value in pmiResults.items():
     #    print(key,value)
-    calculateTtest()
+    calculateTtestBigrams()
     #for key, value in tTestResults.items():
     #    print(key,value)
-    calculateX2Test()
+    calculateX2TestBigrams()
     #for key, value in X2TestResults.items():
     #    print(key,value)
