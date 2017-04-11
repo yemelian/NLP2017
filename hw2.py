@@ -1,4 +1,4 @@
-import sys,os,math
+import sys,os,math,io
 from os import listdir
 from os.path import isfile, join
 from collections import Counter
@@ -18,6 +18,11 @@ def calculateX2Test(): #x = [ P(xy)-P(x)P(y) ] / [P(x)P(y)]
    Py=frequencyOfEachWord[everyElement[1]]
    x2Test=(Pxy-Px*Py)/Px*Py
    X2TestResults[everyElement]=x2Test
+ # saving: xtest_pair.txt
+ file = io.open('xtest_pair.txt', 'w+', encoding='utf8')
+ for key,value in X2TestResults.items():
+     file.write(str(key)+" "+str(value))
+ file.close()
 
 def calculateTtest(): #t = [ P(xy)-P(x)P(y) ] / [sqrt(P(xy)/N)    N=wordsTotal
  global tTestResults
@@ -27,6 +32,11 @@ def calculateTtest(): #t = [ P(xy)-P(x)P(y) ] / [sqrt(P(xy)/N)    N=wordsTotal
    Py=frequencyOfEachWord[everyElement[1]]
    tTest=(Pxy-Px*Py)/math.sqrt(Pxy)/wordsTotal
    tTestResults[everyElement]=tTest
+ # saving: ttest_pair.txt
+ file = io.open('ttest_pair.txt', 'w+', encoding='utf8')
+ for key,value in tTestResults.items():
+     file.write(str(key)+" "+str(value))
+ file.close()
 
 def calculatePMI(): #PMI(x,y) = log(P(xy)/P(x)*P(y) * 1000/N      N=wordsTotal
  global pmiResults
@@ -36,6 +46,11 @@ def calculatePMI(): #PMI(x,y) = log(P(xy)/P(x)*P(y) * 1000/N      N=wordsTotal
    Py=frequencyOfEachWord[everyElement[1]]
    PMI=math.log((Pxy/Px*Py),2)*1000/wordsTotal
    pmiResults[everyElement]=PMI
+ # saving: pmi_pair.txt
+ file = io.open('pmi_pair.txt', 'w+', encoding='utf8')
+ for key,value in pmiResults.items():
+     file.write(str(key)+" "+str(value))
+ file.close()
 
 def calculate_Unigrams(argv):
     global bigrams
@@ -95,7 +110,11 @@ def calculate_Unigrams(argv):
             bigrams[everyElement]+=1
          else:
             bigrams[everyElement]=1
-
+    # saving: freq_raw.txt
+    file = io.open('freq_raw.txt', 'w+', encoding='utf8')
+    for key,value in bigrams.items():
+     file.write(str(key)+" "+str(value))
+    file.close()
     #unigrams - returns number of all words at all corpuses
     return wordsTotal
 pass
@@ -107,7 +126,7 @@ if len(sys.argv) != 4:
 # validate arguments length before continuing
 
 if __name__ == "__main__":
-    print(calculate_Unigrams(sys.argv))
+    calculate_Unigrams(sys.argv)
     calculatePMI()
     #for key, value in pmiResults.items():
     #    print(key,value)
@@ -115,5 +134,5 @@ if __name__ == "__main__":
     #for key, value in tTestResults.items():
     #    print(key,value)
     calculateX2Test()
-    for key, value in X2TestResults.items():
-        print(key,value)
+    #for key, value in X2TestResults.items():
+    #    print(key,value)
