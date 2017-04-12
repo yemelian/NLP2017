@@ -237,11 +237,11 @@ if len(sys.argv) != 4:
 
 if __name__ == "__main__":
     calculate_Unigrams(sys.argv)
-    #calculatePMIBigrams()
-    #calculateTtestBigrams()
-    #calculateX2TestBigrams()
+    calculatePMIBigrams()
+    calculateTtestBigrams()
+    calculateX2TestBigrams()
     calculateTrigrams(sys.argv)
-    #calculateTtestTrigramsA()
-    #calculateTtestTrigramsB()
+    calculateTtestTrigramsA()
+    calculateTtestTrigramsB()
     calculateX3TestTrigramsA()
     calculateX3TestTrigramsB()
