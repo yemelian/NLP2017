@@ -19,18 +19,18 @@ trigramsTotal=0 # trigrams - counter for all trigrams in corpuses
 def saveTop100Results(fileName2Save, resultsToSave): # saving top 100 results from any dictionary that passed
  file = io.open(fileName2Save, 'w+', encoding='utf8')
  for key,value in sorted(resultsToSave.items(), key=lambda x: (-x[1], x[0]))[:100]:
-     file.write(str(key)+" "+str(value))
+     file.write(str(key)+" "+str(value)+"\n")
  file.close()
 
 def calculateTtestTrigramsA(): # t3_a =  [ P(xyz)-P(x)P(y)P(z) ] / [sqrt(P(xyz)/N)]
  global TtestTrigramsAResults
- for everyElement in trigrams:
-   Pxyz=trigrams[everyElement]/trigramsTotal
-   Px=frequencyOfEachWord[everyElement[0]]/wordsTotal
-   Py=frequencyOfEachWord[everyElement[1]]/wordsTotal
-   Pz=frequencyOfEachWord[everyElement[2]]/wordsTotal
-   tTestA=(Pxyz-Px*Py*Pz)/math.sqrt(Pxyz/wordsTotal)
-   TtestTrigramsAResults[everyElement]=tTestA
+ for everyTrigramElement in trigrams:
+  if frequencyOfEachWord[everyTrigramElement[0]]>=20 and frequencyOfEachWord[everyTrigramElement[1]]>=20 and frequencyOfEachWord[everyTrigramElement[2]]>=20: #Px,Py,Pz should be greater than 20
+     Pxyz=trigrams[everyTrigramElement]/trigramsTotal
+     Px=frequencyOfEachWord[everyTrigramElement[0]]/wordsTotal
+     Py=frequencyOfEachWord[everyTrigramElement[1]]/wordsTotal
+     Pz=frequencyOfEachWord[everyTrigramElement[2]]/wordsTotal
+     TtestTrigramsAResults[everyTrigramElement]=float("{0:.3f}".format((Pxyz-Px*Py*Pz)/math.sqrt(Pxyz/wordsTotal)))
  saveTop100Results('ttest_tri_a.txt',TtestTrigramsAResults) # saving top 100 results: ttest_tri_a.txt
 
 def calculateTtestTrigramsB(): # t3_b = [ P(xyz)-P(xy)P(yz) ] / [sqrt(P(xyz)/N)]
@@ -42,8 +42,7 @@ def calculateTtestTrigramsB(): # t3_b = [ P(xyz)-P(xy)P(yz) ] / [sqrt(P(xyz)/N)]
        Pxy=bigrams[tuple(xy)]/bigramsTotal
        yz = everyTrigramElement[1:3]
        Pyz=bigrams[tuple(yz)]/bigramsTotal
-       tTestB=(Pxyz-Pxy*Pyz)/math.sqrt(Pxyz/wordsTotal)
-       TtestTrigramsBResults[everyTrigramElement]=tTestB
+       TtestTrigramsBResults[everyTrigramElement]=float("{0:.3f}".format((Pxyz-Pxy*Pyz)/math.sqrt(Pxyz/wordsTotal)))
   saveTop100Results('ttest_tri_b.txt',TtestTrigramsBResults) # saving top 100 results: ttest_tri_b.txt
 
 def calculateX3TestTrigramsA(): # x3_a = [ P(xyz)-P(x)P(y)P(z) ] / [P(x)P(y)P(z)]
@@ -54,8 +53,7 @@ def calculateX3TestTrigramsA(): # x3_a = [ P(xyz)-P(x)P(y)P(z) ] / [P(x)P(y)P(z)
        Px=frequencyOfEachWord[everyTrigramElement[0]]/wordsTotal
        Py=frequencyOfEachWord[everyTrigramElement[1]]/wordsTotal
        Pz=frequencyOfEachWord[everyTrigramElement[2]]/wordsTotal
-       X3A=(Pxyz-Px*Py*Pz)/ (Px*Py*Pz)
-       X3TrigramsAResults[everyTrigramElement]=X3A
+       X3TrigramsAResults[everyTrigramElement]=float("{0:.3f}".format((Pxyz-Px*Py*Pz)/(Px*Py*Pz)))
  saveTop100Results('xtest_tri_a.txt',X3TrigramsAResults) # saving top 100 results: xtest_tri_a.txt
 
 def calculateX3TestTrigramsB(): # x3_b =  [ P(xyz)-P(xy)P(yz) ] / [P(xy)P(yz)]
@@ -67,8 +65,7 @@ def calculateX3TestTrigramsB(): # x3_b =  [ P(xyz)-P(xy)P(yz) ] / [P(xy)P(yz)]
    Pxy=bigrams[tuple(xy)]/bigramsTotal
    yz = everyTrigramElement[1:3]
    Pyz=bigrams[tuple(yz)]/bigramsTotal
-   X3B=(Pxyz-Pxy*Pyz)/ (Pxy*Pyz)
-   X3TrigramsBResults[everyTrigramElement]=X3B
+   X3TrigramsBResults[everyTrigramElement]=float("{0:.3f}".format((Pxyz-Pxy*Pyz)/ (Pxy*Pyz)))
  saveTop100Results('xtest_tri_b.txt',X3TrigramsBResults)  # saving top 100 results: xtest_tri_b.txt
 
 def calculateX2TestBigrams(): #x = [ P(xy)-P(x)P(y) ] / [P(x)P(y)] N=wordsTotal
@@ -78,8 +75,7 @@ def calculateX2TestBigrams(): #x = [ P(xy)-P(x)P(y) ] / [P(x)P(y)] N=wordsTotal
    Pxy=bigrams[everyElement]/bigramsTotal
    Px=frequencyOfEachWord[everyElement[0]]/wordsTotal
    Py=frequencyOfEachWord[everyElement[1]]/wordsTotal
-   x2Test=(Pxy-Px*Py)/Px*Py
-   X2TestResults[everyElement]=x2Test
+   X2TestResults[everyElement]=float("{0:.3f}".format((Pxy-Px*Py)/Px*Py))
  saveTop100Results('xtest_pair.txt',X2TestResults)  # saving top 100 results:   xtest_pair.txt
 
 def calculateTtestBigrams(): #t = [ P(xy)-P(x)P(y) ] / [sqrt(P(xy)/N)    N=wordsTotal
@@ -89,8 +85,7 @@ def calculateTtestBigrams(): #t = [ P(xy)-P(x)P(y) ] / [sqrt(P(xy)/N)    N=words
     Pxy=bigrams[everyElement]/bigramsTotal
     Px=frequencyOfEachWord[everyElement[0]]/wordsTotal
     Py=frequencyOfEachWord[everyElement[1]]/wordsTotal
-    tTest=(Pxy-Px*Py)/math.sqrt(Pxy)/wordsTotal
-    tTestResults[everyElement]=tTest
+    tTestResults[everyElement]=float("{0:.3f}".format((Pxy-Px*Py)/math.sqrt(Pxy)/wordsTotal))
  saveTop100Results('ttest_pair.txt',tTestResults)  # saving top 100 results: ttest_pair.txt
 
 def calculatePMIBigrams(): #PMI(x,y) = log(P(xy)/P(x)*P(y)
@@ -100,8 +95,7 @@ def calculatePMIBigrams(): #PMI(x,y) = log(P(xy)/P(x)*P(y)
    Pxy=bigrams[everyElement]/bigramsTotal
    Px=frequencyOfEachWord[everyElement[0]]/wordsTotal
    Py=frequencyOfEachWord[everyElement[1]]/wordsTotal
-   PMI=math.log((Pxy/Px*Py),2)
-   pmiResults[everyElement]=PMI
+   pmiResults[everyElement]=float("{0:.3f}".format(math.log((Pxy/Px*Py),2)))
  saveTop100Results('pmi_pair.txt',pmiResults) # saving top 100 results: pmi_pair.txt
 
 def calculateTrigrams(argv):
@@ -200,13 +194,11 @@ def calculate_Unigrams(argv):
          else:
             bigrams[everyElement]=1
             bigramsTotal+=1
-    # saving: freq_raw.txt
-    file = io.open('freq_raw.txt', 'w+', encoding='utf8')
-    for key,value in bigrams.items():
-     file.write(str(key)+" "+str((value/wordsTotal)*1000)) #multiply by 1000
+    file = io.open('freq_raw.txt', 'w+', encoding='utf8')       # saving: freq_raw.txt
+    #for key,value in bigrams.items():
+    for key,value in sorted(bigrams.items(), key=lambda x: (-x[1], x[0])):
+      file.write(str(key)+" "+str(float("{0:.3f}".format((value/wordsTotal)*1000)))+"\n") #multiply by 1000
     file.close()
-    #unigrams - returns number of all words at all corpuses
-    return wordsTotal
 pass
 
 if len(sys.argv) != 4: # validate arguments length before continuing ##############################################
