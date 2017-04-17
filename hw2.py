@@ -102,14 +102,14 @@ def calculateTtestBigrams(): #t = [ P(xy)-P(x)P(y) ] / [sqrt(P(xy)/N)    N=words
     tTestResults[everyElement]=float("{0:.3f}".format((Pxy-Px*Py)/ math.sqrt(Pxy/wordsTotal)))
  saveTop100Results('ttest_pair.txt',tTestResults)  # saving top 100 results: ttest_pair.txt
 
-def calculatePMIBigrams(): #PMI(x,y) = log(P(xy)/P(x)*P(y)
+def calculatePMIBigrams(): #PMI(x,y) = log(P(xy)/(P(x)*P(y))
  global pmiResults
  for everyElement in bigrams:
   if frequencyOfEachWord[everyElement[0]]>=20 and frequencyOfEachWord[everyElement[1]]>=20: #Px and Py should be greater than 20
    Pxy=bigrams[tuple(everyElement)]/bigramsTotal
    Px=frequencyOfEachWord[everyElement[0]]/wordsTotal
    Py=frequencyOfEachWord[everyElement[1]]/wordsTotal
-   pmiResults[everyElement]=float("{0:.3f}".format(math.log((Pxy/Px*Py),2)))
+   pmiResults[everyElement]=float("{0:.3f}".format(math.log((Pxy/(Px*Py)),2)))
  saveTop100Results('pmi_pair.txt',pmiResults) # saving top 100 results: pmi_pair.txt
 
 def calculateTrigrams(argv):
