@@ -39,7 +39,7 @@ def saveTop100Results(fileName2Save, resultsToSave): # saving top 100 results fr
 def calculateTtestTrigramsA(): # t3_a =  [ P(xyz)-P(x)P(y)P(z) ] / [sqrt(P(xyz)/N)]
  global TtestTrigramsAResults
  for everyTrigramElement in trigrams:
-  #if frequencyOfEachWord[everyTrigramElement[0]]>=20 and frequencyOfEachWord[everyTrigramElement[1]]>=20 and frequencyOfEachWord[everyTrigramElement[2]]>=20: #Px,Py,Pz should be greater than 20
+  if frequencyOfEachWord[everyTrigramElement[0]]>=20 and frequencyOfEachWord[everyTrigramElement[1]]>=20 and frequencyOfEachWord[everyTrigramElement[2]]>=20: #Px,Py,Pz should be greater than 20
      Pxyz=trigrams[everyTrigramElement]/trigramsTotal
      Px=frequencyOfEachWord[everyTrigramElement[0]]/wordsTotal
      Py=frequencyOfEachWord[everyTrigramElement[1]]/wordsTotal
@@ -55,7 +55,7 @@ def calculateTtestTrigramsA(): # t3_a =  [ P(xyz)-P(x)P(y)P(z) ] / [sqrt(P(xyz)/
 def calculateTtestTrigramsB(): # t3_b = [ P(xyz)-P(xy)P(yz) ] / [sqrt(P(xyz)/N)]
   global TtestTrigramsBResults
   for everyTrigramElement in trigrams:
-    #if frequencyOfEachWord[everyTrigramElement[0]]>=20 and frequencyOfEachWord[everyTrigramElement[1]]>=20 and frequencyOfEachWord[everyTrigramElement[2]]>=20: #Px,Py,Pz should be greater than 20
+    if frequencyOfEachWord[everyTrigramElement[0]]>=20 and frequencyOfEachWord[everyTrigramElement[1]]>=20 and frequencyOfEachWord[everyTrigramElement[2]]>=20: #Px,Py,Pz should be greater than 20
        Pxyz=trigrams[everyTrigramElement]/trigramsTotal
        xy = everyTrigramElement[0:2]
        Pxy=bigrams[tuple(xy)]/bigramsTotal
@@ -72,7 +72,7 @@ def calculateTtestTrigramsB(): # t3_b = [ P(xyz)-P(xy)P(yz) ] / [sqrt(P(xyz)/N)]
 def calculateX3TestTrigramsA(): # x3_a = [ P(xyz)-P(x)P(y)P(z) ] / [P(x)P(y)P(z)]
  global X3TrigramsAResults
  for everyTrigramElement in trigrams:
-  #if frequencyOfEachWord[everyTrigramElement[0]]>=20 and frequencyOfEachWord[everyTrigramElement[1]]>=20 and frequencyOfEachWord[everyTrigramElement[2]]>=20: #Px,Py,Pz should be greater than 20
+  if frequencyOfEachWord[everyTrigramElement[0]]>=20 and frequencyOfEachWord[everyTrigramElement[1]]>=20 and frequencyOfEachWord[everyTrigramElement[2]]>=20: #Px,Py,Pz should be greater than 20
        Pxyz=trigrams[everyTrigramElement]/trigramsTotal
        Px=frequencyOfEachWord[everyTrigramElement[0]]/wordsTotal
        Py=frequencyOfEachWord[everyTrigramElement[1]]/wordsTotal
@@ -88,7 +88,7 @@ def calculateX3TestTrigramsA(): # x3_a = [ P(xyz)-P(x)P(y)P(z) ] / [P(x)P(y)P(z)
 def calculateX3TestTrigramsB(): # x3_b =  [ P(xyz)-P(xy)P(yz) ] / [P(xy)P(yz)]
  global X3TrigramsBResults
  for everyTrigramElement in trigrams:
-  #if frequencyOfEachWord[everyTrigramElement[0]]>=20 and frequencyOfEachWord[everyTrigramElement[1]]>=20 and frequencyOfEachWord[everyTrigramElement[2]]>=20: #Px,Py,Pz should be greater than 20
+  if frequencyOfEachWord[everyTrigramElement[0]]>=20 and frequencyOfEachWord[everyTrigramElement[1]]>=20 and frequencyOfEachWord[everyTrigramElement[2]]>=20: #Px,Py,Pz should be greater than 20
    Pxyz=trigrams[everyTrigramElement]/trigramsTotal
    xy = everyTrigramElement[0:2]
    Pxy=bigrams[tuple(xy)]/bigramsTotal
@@ -105,7 +105,7 @@ def calculateX3TestTrigramsB(): # x3_b =  [ P(xyz)-P(xy)P(yz) ] / [P(xy)P(yz)]
 def calculateX2TestBigrams(): #x = [ P(xy)-P(x)P(y) ] / [P(x)P(y)]
  global X2TestResults
  for everyElement in bigrams:
-  #if frequencyOfEachWord[everyElement[0]]>=20 and frequencyOfEachWord[everyElement[1]]>=20: #Px and Py should be greater than 20
+  if frequencyOfEachWord[everyElement[0]]>=20 and frequencyOfEachWord[everyElement[1]]>=20: #Px and Py should be greater than 20
    Pxy=bigrams[tuple(everyElement)]/bigramsTotal
    Px=frequencyOfEachWord[everyElement[0]]/wordsTotal
    Py=frequencyOfEachWord[everyElement[1]]/wordsTotal
@@ -120,7 +120,7 @@ def calculateX2TestBigrams(): #x = [ P(xy)-P(x)P(y) ] / [P(x)P(y)]
 def calculateTtestBigrams(): #t = [ P(xy)-P(x)P(y) ] / [sqrt(P(xy)/N)    N=wordsTotal
  global tTestResults
  for everyElement in bigrams:
-   #if frequencyOfEachWord[everyElement[0]]>=20 and frequencyOfEachWord[everyElement[1]]>=20: #Px and Py should be greater than 20
+   if frequencyOfEachWord[everyElement[0]]>=20 and frequencyOfEachWord[everyElement[1]]>=20: #Px and Py should be greater than 20
     Pxy=bigrams[tuple(everyElement)]/bigramsTotal
     Px=frequencyOfEachWord[everyElement[0]]/wordsTotal
     Py=frequencyOfEachWord[everyElement[1]]/wordsTotal
@@ -135,7 +135,7 @@ def calculateTtestBigrams(): #t = [ P(xy)-P(x)P(y) ] / [sqrt(P(xy)/N)    N=words
 def calculatePMIBigrams(): #PMI(x,y) = log(P(xy)/(P(x)*P(y))
  global pmiResults
  for everyElement in bigrams:
-  #if frequencyOfEachWord[everyElement[0]]>=20 and frequencyOfEachWord[everyElement[1]]>=20: #Px and Py should be greater than 20
+  if frequencyOfEachWord[everyElement[0]]>=20 and frequencyOfEachWord[everyElement[1]]>=20: #Px and Py should be greater than 20
    Pxy=bigrams[tuple(everyElement)]/bigramsTotal
    Px=frequencyOfEachWord[everyElement[0]]/wordsTotal
    Py=frequencyOfEachWord[everyElement[1]]/wordsTotal
