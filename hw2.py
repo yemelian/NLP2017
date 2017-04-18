@@ -1,4 +1,4 @@
-import sys,os,math,io
+import sys,os,math,io, itertools
 from os import listdir
 from os.path import isfile
 
@@ -22,13 +22,31 @@ def calculateMutualCollacationsTrigram():
     global TtestTrigramsBResults
     global X3TrigramsAResults
     global X3TrigramsBResults
-    intersect = []
-    TtestTrigramsAResults=sorted(TtestTrigramsAResults.items(), key=lambda x: (-x[1], x[0]),reverse=True)[:10000]
-    TtestTrigramsBResults=sorted(TtestTrigramsBResults.items(), key=lambda x: (-x[1], x[0]),reverse=True)[:10000]
-    X3TrigramsAResults=sorted(X3TrigramsAResults.items(), key=lambda x: (-x[1], x[0]),reverse=True)[:10000]
-    X3TrigramsBResults=sorted(X3TrigramsBResults.items(), key=lambda x: (-x[1], x[0]),reverse=True)[:10000]
-    intersect=set(TtestTrigramsAResults) & set(TtestTrigramsBResults) & set(X3TrigramsAResults) & set(X3TrigramsBResults)
+    intersect= {}
+    i=iter(TtestTrigramsAResults)
+    TtestTrigramsAResults=dict((k) for k in TtestTrigramsAResults)
+    TtestTrigramsAResults=sorted(TtestTrigramsAResults.items(), key=lambda x: (x[1]),reverse=True)[:10000]
+    TtestTrigramsAResults=dict((k) for k in TtestTrigramsAResults)
+    i=iter(TtestTrigramsBResults)
+    TtestTrigramsBResults=dict((k) for k in TtestTrigramsBResults)
+    TtestTrigramsBResults=sorted(TtestTrigramsBResults.items(), key=lambda x: (x[1]),reverse=True)[:10000]
+    TtestTrigramsBResults=dict((k) for k in TtestTrigramsBResults)
+    i=iter(X3TrigramsAResults)
+    X3TrigramsAResults=dict((k) for k in X3TrigramsAResults)
+    X3TrigramsAResults=sorted(X3TrigramsAResults.items(), key=lambda x: (x[1]),reverse=True)[:10000]
+    X3TrigramsAResults=dict((k) for k in X3TrigramsAResults)
+    i=iter(X3TrigramsBResults)
+    X3TrigramsBResults=dict((k) for k in X3TrigramsBResults)
+    X3TrigramsBResults=sorted(X3TrigramsBResults.items(), key=lambda x: (x[1]),reverse=True)[:10000]
+    X3TrigramsBResults=dict((k) for k in X3TrigramsBResults)
+
+    for key in TtestTrigramsAResults:
+       if key in TtestTrigramsBResults:
+           if key in X3TrigramsAResults:
+               if key in X3TrigramsBResults:
+                 intersect[key]=0
     print(intersect)
+
 
 def saveTop100Results(fileName2Save, resultsToSave): # saving top 100 results from any dictionary that passed
  file = io.open(fileName2Save, 'w+', encoding='utf8')
@@ -266,4 +284,4 @@ if __name__ == "__main__":
     calculateTtestTrigramsB()
     calculateX3TestTrigramsA()
     calculateX3TestTrigramsB()
-    #calculateMutualCollacationsTrigram()
+    calculateMutualCollacationsTrigram()
