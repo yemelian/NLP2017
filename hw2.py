@@ -43,6 +43,33 @@ trigramsTotalCorpus1=0 # trigrams - counter for all trigrams in corpus1
 trigramsTotalCorpus2=0 # trigrams - counter for all trigrams in corpus2
 mutualTrigramsFromResults={}
 
+def calculateTop1000CollacationsCorpuses():
+    global bigramsCorpus1
+    global bigramsCorpus2
+    global trigramsCorpus1
+    global trigramsCorpus2
+    bigramsCorpus1=sorted(bigramsCorpus1.items(), key=lambda x: (x[1]),reverse=True)[:1000]
+    bigramsCorpus2=sorted(bigramsCorpus2.items(), key=lambda x: (x[1]),reverse=True)[:1000]
+    trigramsCorpus1=sorted(trigramsCorpus1.items(), key=lambda x: (x[1]),reverse=True)[:1000]
+    trigramsCorpus2=sorted(trigramsCorpus2.items(), key=lambda x: (x[1]),reverse=True)[:1000]
+    print()
+
+def calculateMutualCollacationsCorpuses():
+    global bigramsCorpus1
+    global bigramsCorpus2
+    global trigramsCorpus1
+    global trigramsCorpus2
+    intersectBigrams= {}
+    intersectTrigrams= {}
+
+    for key in bigramsCorpus1:
+       if key in bigramsCorpus2:
+                 intersectBigrams[key]=0
+
+    for key in trigramsCorpus1:
+       if key in trigramsCorpus2:
+                 intersectTrigrams[key]=0
+
 def calculateMutualCollacationsTrigram():
     global TtestTrigramsAResults
     global TtestTrigramsBResults
@@ -560,7 +587,7 @@ if __name__ == "__main__":
     calculateTtestTrigramsB()
     calculateX3TestTrigramsA()
     calculateX3TestTrigramsB()
-    ##### Question 6 - results
+    ##### Question 5 - results
     calculatePMIBigramsCorpus1()
     calculatePMIBigramsCorpus2()
     calculateTtestBigramsCorpus1()
@@ -575,4 +602,7 @@ if __name__ == "__main__":
     calculateX3TestTrigramsACorpus2()
     calculateX3TestTrigramsBCorpus1()
     calculateX3TestTrigramsBCorpus2()
+    calculateMutualCollacationsCorpuses()
+    calculateTop1000CollacationsCorpuses()
+    #### Question 6 - results
     #calculateMutualCollacationsTrigram()
