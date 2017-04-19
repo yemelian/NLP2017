@@ -70,34 +70,35 @@ def calculateMutualCollacationsCorpuses():
        if key in trigramsCorpus2:
                  intersectTrigrams[key]=0
 
-def calculateMutualCollacationsTrigram():
-    global TtestTrigramsAResults
-    global TtestTrigramsBResults
-    global X3TrigramsAResults
-    global X3TrigramsBResults
-    intersect= {}
-    i=iter(TtestTrigramsAResults)
-    TtestTrigramsAResults=dict((k) for k in TtestTrigramsAResults)
-    TtestTrigramsAResults=sorted(TtestTrigramsAResults.items(), key=lambda x: (x[1]),reverse=True)
-    TtestTrigramsAResults=dict((k) for k in TtestTrigramsAResults)
-    i=iter(TtestTrigramsBResults)
-    TtestTrigramsBResults=dict((k) for k in TtestTrigramsBResults)
-    TtestTrigramsBResults=sorted(TtestTrigramsBResults.items(), key=lambda x: (x[1]),reverse=True)
-    TtestTrigramsBResults=dict((k) for k in TtestTrigramsBResults)
-    i=iter(X3TrigramsAResults)
-    X3TrigramsAResults=dict((k) for k in X3TrigramsAResults)
-    X3TrigramsAResults=sorted(X3TrigramsAResults.items(), key=lambda x: (x[1]),reverse=True)
-    X3TrigramsAResults=dict((k) for k in X3TrigramsAResults)
-    i=iter(X3TrigramsBResults)
-    X3TrigramsBResults=dict((k) for k in X3TrigramsBResults)
-    X3TrigramsBResults=sorted(X3TrigramsBResults.items(), key=lambda x: (x[1]),reverse=True)
-    X3TrigramsBResults=dict((k) for k in X3TrigramsBResults)
+def calculateMutualCollacationsTrigramCorpuses():
+     global TtestTrigramsACorpus1Results
+     global TtestTrigramsACorpus2Results
+     global TtestTrigramsBCorpus1Results
+     global TtestTrigramsBCorpus2Results
+     global X3TrigramsACorpus1Results
+     global X3TrigramsACorpus2Results
+     global X3TrigramsBCorpus1Results
+     global X3TrigramsBCorpus2Results
+     intersectTtestTrigramsA= {}
+     intersectTtestTrigramsB= {}
+     intersectX3TrigramsA= {}
+     intersectX3TrigramsB= {}
 
-    for key in TtestTrigramsAResults:
-       if key in TtestTrigramsBResults:
-           if key in X3TrigramsAResults:
-               if key in X3TrigramsBResults:
-                 intersect[key]=0
+     for key in TtestTrigramsACorpus1Results:
+       if key in TtestTrigramsACorpus2Results:
+                 intersectTtestTrigramsA[key]=0
+
+     for key in TtestTrigramsBCorpus1Results:
+       if key in TtestTrigramsBCorpus2Results:
+                 intersectTtestTrigramsB[key]=0
+
+     for key in X3TrigramsACorpus1Results:
+       if key in X3TrigramsACorpus2Results:
+                 intersectX3TrigramsA[key]=0
+
+     for key in X3TrigramsBCorpus1Results:
+       if key in X3TrigramsBCorpus2Results:
+                 intersectX3TrigramsB[key]=0
 
 def calculateTtestTrigramsA(): # t3_a =  [ P(xyz)-P(x)P(y)P(z) ] / [sqrt(P(xyz)/N)] ALL CORPUSES
  global TtestTrigramsAResults
@@ -562,11 +563,11 @@ def calculate_Unigrams(argv):
       file.write(str(key)+" "+str(float("{0:.3f}".format((value/wordsTotal)*1000)))+"\n") #multiply by 1000
     file.close()
     file = io.open('freq_raw_corpus1.txt', 'w+', encoding='utf8')       # saving: freq_raw_corpus1.txt CORPUS1
-    for key,value in sorted(bigramsCorpus1.items(), key=lambda x: (x[1], x[0])):
+    for key,value in sorted(bigramsCorpus1.items(), key=lambda x: (x[1], x[0]),reverse=True):
       file.write(str(key)+" "+str(float("{0:.3f}".format((value/wordsTotalCorpus1)*1000)))+"\n") #multiply by 1000
     file.close()
     file = io.open('freq_raw_corpus2.txt', 'w+', encoding='utf8')       # saving: freq_raw_corpus1.txt CORPUS2
-    for key,value in sorted(bigramsCorpus2.items(), key=lambda x: (x[1], x[0])):
+    for key,value in sorted(bigramsCorpus2.items(), key=lambda x: (x[1], x[0]),reverse=True):
       file.write(str(key)+" "+str(float("{0:.3f}".format((value/wordsTotalCorpus2)*1000)))+"\n") #multiply by 1000
     file.close()
 pass
@@ -605,4 +606,4 @@ if __name__ == "__main__":
     calculateMutualCollacationsCorpuses()
     calculateTop1000CollacationsCorpuses()
     #### Question 6 - results
-    #calculateMutualCollacationsTrigram()
+    calculateMutualCollacationsTrigramCorpuses()
