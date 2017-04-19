@@ -87,18 +87,31 @@ def calculateMutualCollacationsTrigramCorpuses():
      for key in TtestTrigramsACorpus1Results:
        if key in TtestTrigramsACorpus2Results:
                  intersectTtestTrigramsA[key]=0
+     print("Question 6:\n")
+     print("Printing intersection of TtestTrigramsA corpuses:")
+     for key, value in intersectTtestTrigramsA.items() :
+      print(key+"\n")
 
      for key in TtestTrigramsBCorpus1Results:
        if key in TtestTrigramsBCorpus2Results:
                  intersectTtestTrigramsB[key]=0
+     print("Printing intersection of TtestTrigramsB corpuses:")
+     for key, value in intersectTtestTrigramsB.items() :
+      print(key+"\n")
 
      for key in X3TrigramsACorpus1Results:
        if key in X3TrigramsACorpus2Results:
                  intersectX3TrigramsA[key]=0
+     print("Printing intersection of X3TrigramsA corpuses:")
+     for key, value in intersectX3TrigramsA.items() :
+      print(key+"\n")
 
      for key in X3TrigramsBCorpus1Results:
        if key in X3TrigramsBCorpus2Results:
                  intersectX3TrigramsB[key]=0
+     print("Printing intersection of X3TrigramsB corpuses:")
+     for key, value in intersectX3TrigramsB.items() :
+      print(key+"\n")
 
 def calculateTtestTrigramsA(): # t3_a =  [ P(xyz)-P(x)P(y)P(z) ] / [sqrt(P(xyz)/N)] ALL CORPUSES
  global TtestTrigramsAResults
@@ -125,7 +138,7 @@ def calculateTtestTrigramsACorpus1(): # t3_a =  [ P(xyz)-P(x)P(y)P(z) ] / [sqrt(
      Pz=frequencyOfEachWordCorpus1[everyTrigramElement[2]]/wordsTotalCorpus1
      TtestTrigramsACorpus1Results[everyTrigramElement]=float("{0:.3f}".format((Pxyz-Px*Py*Pz)/math.sqrt(Pxyz/wordsTotalCorpus1)))
  file = io.open('ttest_tri_a_corpus1.txt', 'w+', encoding='utf8')
- TtestTrigramsACorpus1Results=sorted(TtestTrigramsACorpus1Results.items(), key=lambda x: (x[1]),reverse=True)[:100]
+ TtestTrigramsACorpus1Results=sorted(TtestTrigramsACorpus1Results.items(), key=lambda x: (x[1]),reverse=True)[:10000]
  for key,value in TtestTrigramsACorpus1Results:
      file.write(str(key)+" "+str(value)+"\n")
  file.close()
@@ -140,7 +153,7 @@ def calculateTtestTrigramsACorpus2(): # t3_a =  [ P(xyz)-P(x)P(y)P(z) ] / [sqrt(
      Pz=frequencyOfEachWordCorpus2[everyTrigramElement[2]]/wordsTotalCorpus2
      TtestTrigramsACorpus2Results[everyTrigramElement]=float("{0:.3f}".format((Pxyz-Px*Py*Pz)/math.sqrt(Pxyz/wordsTotalCorpus2)))
  file = io.open('ttest_tri_a_corpus2.txt', 'w+', encoding='utf8')
- TtestTrigramsACorpus2Results=sorted(TtestTrigramsACorpus2Results.items(), key=lambda x: (x[1]),reverse=True)[:100]
+ TtestTrigramsACorpus2Results=sorted(TtestTrigramsACorpus2Results.items(), key=lambda x: (x[1]),reverse=True)[:10000]
  for key,value in TtestTrigramsACorpus2Results:
      file.write(str(key)+" "+str(value)+"\n")
  file.close()
@@ -172,7 +185,7 @@ def calculateTtestTrigramsBCorpus1(): # t3_b = [ P(xyz)-P(xy)P(yz) ] / [sqrt(P(x
        Pyz=bigramsCorpus1[tuple(yz)]/bigramsTotalCorpus1
        TtestTrigramsBCorpus1Results[everyTrigramElement]=float("{0:.3f}".format((Pxyz-Pxy*Pyz)/math.sqrt(Pxyz/wordsTotalCorpus1)))
   file = io.open('ttest_tri_b_corpus1.txt', 'w+', encoding='utf8')
-  TtestTrigramsBCorpus1Results=sorted(TtestTrigramsBCorpus1Results.items(), key=lambda x: (x[1]),reverse=True)[:100]
+  TtestTrigramsBCorpus1Results=sorted(TtestTrigramsBCorpus1Results.items(), key=lambda x: (x[1]),reverse=True)[:10000]
   for key,value in TtestTrigramsBCorpus1Results:
      file.write(str(key)+" "+str(value)+"\n")
   file.close()
@@ -188,7 +201,7 @@ def calculateTtestTrigramsBCorpus2(): # t3_b = [ P(xyz)-P(xy)P(yz) ] / [sqrt(P(x
        Pyz=bigramsCorpus2[tuple(yz)]/bigramsTotalCorpus2
        TtestTrigramsBCorpus2Results[everyTrigramElement]=float("{0:.3f}".format((Pxyz-Pxy*Pyz)/math.sqrt(Pxyz/wordsTotalCorpus2)))
   file = io.open('ttest_tri_b_corpus2.txt', 'w+', encoding='utf8')
-  TtestTrigramsBCorpus2Results=sorted(TtestTrigramsBCorpus2Results.items(), key=lambda x: (x[1]),reverse=True)[:100]
+  TtestTrigramsBCorpus2Results=sorted(TtestTrigramsBCorpus2Results.items(), key=lambda x: (x[1]),reverse=True)[:10000]
   for key,value in TtestTrigramsBCorpus2Results:
      file.write(str(key)+" "+str(value)+"\n")
   file.close()
@@ -218,7 +231,7 @@ def calculateX3TestTrigramsACorpus1(): # x3_a = [ P(xyz)-P(x)P(y)P(z) ] / [P(x)P
        Pz=frequencyOfEachWordCorpus1[everyTrigramElement[2]]/wordsTotalCorpus1
        X3TrigramsACorpus1Results[everyTrigramElement]=float("{0:.3f}".format((Pxyz-Px*Py*Pz)/(Px*Py*Pz)))
  file = io.open('xtest_tri_a_corpus1.txt', 'w+', encoding='utf8')
- X3TrigramsACorpus1Results=sorted(X3TrigramsACorpus1Results.items(), key=lambda x: (x[1]),reverse=True)[:100]
+ X3TrigramsACorpus1Results=sorted(X3TrigramsACorpus1Results.items(), key=lambda x: (x[1]),reverse=True)[:10000]
  for key,value in X3TrigramsACorpus1Results:
      file.write(str(key)+" "+str(value)+"\n")
  file.close()
@@ -233,7 +246,7 @@ def calculateX3TestTrigramsACorpus2(): # x3_a = [ P(xyz)-P(x)P(y)P(z) ] / [P(x)P
        Pz=frequencyOfEachWordCorpus2[everyTrigramElement[2]]/wordsTotalCorpus2
        X3TrigramsACorpus2Results[everyTrigramElement]=float("{0:.3f}".format((Pxyz-Px*Py*Pz)/(Px*Py*Pz)))
  file = io.open('xtest_tri_a_corpus2.txt', 'w+', encoding='utf8')
- X3TrigramsACorpus2Results=sorted(X3TrigramsACorpus2Results.items(), key=lambda x: (x[1]),reverse=True)[:100]
+ X3TrigramsACorpus2Results=sorted(X3TrigramsACorpus2Results.items(), key=lambda x: (x[1]),reverse=True)[:10000]
  for key,value in X3TrigramsACorpus2Results:
      file.write(str(key)+" "+str(value)+"\n")
  file.close()
@@ -265,7 +278,7 @@ def calculateX3TestTrigramsBCorpus1(): # x3_b =  [ P(xyz)-P(xy)P(yz) ] / [P(xy)P
    Pyz=bigramsCorpus1[tuple(yz)]/bigramsTotalCorpus1
    X3TrigramsBCorpus1Results[everyTrigramElement]=float("{0:.3f}".format((Pxyz-Pxy*Pyz)/ (Pxy*Pyz)))
  file = io.open('xtest_tri_b_corpus1.txt', 'w+', encoding='utf8')
- X3TrigramsBCorpus1Results=sorted(X3TrigramsBCorpus1Results.items(), key=lambda x: (x[1]),reverse=True)[:100]
+ X3TrigramsBCorpus1Results=sorted(X3TrigramsBCorpus1Results.items(), key=lambda x: (x[1]),reverse=True)[:10000]
  for key,value in X3TrigramsBCorpus1Results:
      file.write(str(key)+" "+str(value)+"\n")
  file.close()
@@ -281,7 +294,7 @@ def calculateX3TestTrigramsBCorpus2(): # x3_b =  [ P(xyz)-P(xy)P(yz) ] / [P(xy)P
    Pyz=bigramsCorpus2[tuple(yz)]/bigramsTotalCorpus2
    X3TrigramsBCorpus2Results[everyTrigramElement]=float("{0:.3f}".format((Pxyz-Pxy*Pyz)/ (Pxy*Pyz)))
  file = io.open('xtest_tri_b_corpus2.txt', 'w+', encoding='utf8')
- X3TrigramsBCorpus2Results=sorted(X3TrigramsBCorpus2Results.items(), key=lambda x: (x[1]),reverse=True)[:100]
+ X3TrigramsBCorpus2Results=sorted(X3TrigramsBCorpus2Results.items(), key=lambda x: (x[1]),reverse=True)[:10000]
  for key,value in X3TrigramsBCorpus2Results:
      file.write(str(key)+" "+str(value)+"\n")
  file.close()
