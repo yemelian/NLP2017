@@ -7,7 +7,7 @@ def get_lyrics_from_csv_by_artist(lyrics_file_name, artists, maximum_songs_numbe
     :param lyrics_file_name: lyrics csv file name to be parsed
     :param artists: list of artist
     :param maximum_songs_number: maximum song number to be retrieved for each artist
-    :return: lyrics of the artists provided appended one after the other
+    :return: lyrics of the artists dictionary { "artist": [lyric1, lyric2,..], "artist2": [...] }
     """
     fieldnames = ['index', 'song', 'year', 'artist', 'genre', 'lyrics']
     d = {}
@@ -21,13 +21,17 @@ def get_lyrics_from_csv_by_artist(lyrics_file_name, artists, maximum_songs_numbe
         for key in row:
             d[key].append(row[key])
 
+    result = {}
 
     # loop over artists and retrieve each one's lyrics
     for artist_idx in range(len(artists)):
+
+        lyrics = []
         songs_retrieved = 0
         artist = artists[artist_idx]
+
         for index in range(len(d["artist"])):
-            # skip first index, since it is the column name e.g (index,genere,artist..)
+            # skip first index, since it is the column name e.g (index, genre, artist..)
             if index == 0:
                 continue
             if d["artist"][index] == artist:
@@ -36,7 +40,12 @@ def get_lyrics_from_csv_by_artist(lyrics_file_name, artists, maximum_songs_numbe
                 if songs_retrieved > maximum_songs_number:
                     break
                 else:
-                    print(d["lyrics"][index])
+                    # lyrics.append(d["lyrics"][index])
+                    lyrics.append(d["lyrics"][index].replace('\n', ' '))
+
+        result[artist] = lyrics
+
+    print(result)
 
 pass
 
