@@ -1,28 +1,37 @@
-import sys,os,math,io, itertools
+import sys
+import csv
 
 
-def featureClassification(argv):
-    # Get 50 english words
-    wordsTop50 = []
-    #fileTop50 = io.open(sys.argv[2], 'w+', encoding='utf8')
-    with open(sys.argv[2], "r") as fileTop50:
-        for line in fileTop50.readlines():
-            wordsTop50.append(line.replace("\n", ""))
-    fileTop50.close()
-    # Get 400 songs
-    #songsToProcess = io.open(sys.argv[1], 'w+', encoding='utf8')
-    with open(sys.argv[1], "r", encoding='utf8') as songsToProcess:
-        for line in songsToProcess.readline():
-          print(line)
-    songsToProcess.close()
+def get_yrics_of_beatles_and_britney_spears(lyrics_file_name):
+    fieldnames = ['index', 'song', 'year', 'artist', 'genre', 'lyrics']
+    d = {}
+    for fn in fieldnames:
+        d[fn] = []
 
-    pass
+    dict_reader = csv.DictReader(open(lyrics_file_name, 'r', encoding='utf8'), fieldnames=fieldnames, delimiter=',',
+                                 quotechar='"')
 
-if len(sys.argv) != 4: # validate arguments length before continuing ##############################################
-    sys.exit('Invalid argument number!, please make sure you run the the command as follow: '
-                 'python hw3.py <input_file> <words_file_input_path> <best_words_file_output_path>')
-   # validate arguments length before continuing #####################################################################
+    for row in dict_reader:
+        for key in row:
+            d[key].append(row[key])
+    print(d)
+
+    # loop over dictionary and retrieve beatles and britney spears lyrics
+pass
+
+
+def feature_classification(argv):
+
+    #if len(sys.argv) != 4:
+    #   sys.exit('Invalid argument number!, please make sure you run the the command as follow: python hw3.py'
+    #             '<input_file> <words_file_input_path> <best_words_file_output_path>')
+
+    # lyrics file
+    lyrics_file_name = str(sys.argv[1])
+    get_yrics_of_beatles_and_britney_spears(lyrics_file_name)
+
+pass
 
 if __name__ == "__main__":
     ##### Questions 1 results
-  featureClassification(sys.argv)
+    feature_classification(sys.argv)
