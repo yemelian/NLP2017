@@ -2,7 +2,13 @@ import sys
 import csv
 
 
-def get_lyrics_from_csv_by_artist(lyrics_file_name, artists):
+def get_lyrics_from_csv_by_artist(lyrics_file_name, artists, maximum_songs_number):
+    """
+    :param lyrics_file_name: lyrics csv file name to be parsed
+    :param artists: list of artist
+    :param maximum_songs_number: maximum song number to be retrieved for each artist
+    :return: lyrics of the artists provided appended one after the other
+    """
     fieldnames = ['index', 'song', 'year', 'artist', 'genre', 'lyrics']
     d = {}
     for fn in fieldnames:
@@ -15,17 +21,23 @@ def get_lyrics_from_csv_by_artist(lyrics_file_name, artists):
         for key in row:
             d[key].append(row[key])
 
+
     # loop over artists and retrieve each one's lyrics
     for artist_idx in range(len(artists)):
+        songs_retrieved = 0
         artist = artists[artist_idx]
         for index in range(len(d["artist"])):
-            # skip first index, sinnce it is the column name e.g (index,genere,artist..)
+            # skip first index, since it is the column name e.g (index,genere,artist..)
             if index == 0:
                 continue
             if d["artist"][index] == artist:
-                print(d["lyrics"][index])
+                ++songs_retrieved
+                # break the artist's inner loop
+                if songs_retrieved > maximum_songs_number:
+                    break
+                else:
+                    print(d["lyrics"][index])
 
-    # print(d)
 pass
 
 
@@ -37,7 +49,7 @@ def feature_classification(argv):
 
     # lyrics file
     lyrics_file_name = str(sys.argv[1])
-    get_lyrics_from_csv_by_artist(lyrics_file_name, ["beatles", "britney-spears"])
+    get_lyrics_from_csv_by_artist(lyrics_file_name, ["beatles", "britney-spears"], 400)
 
 pass
 
