@@ -2,7 +2,7 @@ import sys
 import csv
 
 
-def get_yrics_of_beatles_and_britney_spears(lyrics_file_name):
+def get_lyrics_from_csv_by_artist(lyrics_file_name, artists):
     fieldnames = ['index', 'song', 'year', 'artist', 'genre', 'lyrics']
     d = {}
     for fn in fieldnames:
@@ -14,9 +14,18 @@ def get_yrics_of_beatles_and_britney_spears(lyrics_file_name):
     for row in dict_reader:
         for key in row:
             d[key].append(row[key])
-    print(d)
 
-    # loop over dictionary and retrieve beatles and britney spears lyrics
+    # loop over artists and retrieve each one's lyrics
+    for artist_idx in range(len(artists)):
+        artist = artists[artist_idx]
+        for index in range(len(d["artist"])):
+            # skip first index, sinnce it is the column name e.g (index,genere,artist..)
+            if index == 0:
+                continue
+            if d["artist"][index] == artist:
+                print(d["lyrics"][index])
+
+    # print(d)
 pass
 
 
@@ -28,7 +37,7 @@ def feature_classification(argv):
 
     # lyrics file
     lyrics_file_name = str(sys.argv[1])
-    get_yrics_of_beatles_and_britney_spears(lyrics_file_name)
+    get_lyrics_from_csv_by_artist(lyrics_file_name, ["beatles", "britney-spears"])
 
 pass
 
