@@ -1,6 +1,10 @@
-import sys
+import sys, itertools
 import csv
+from copy import deepcopy
 
+result = {}
+featureVectorsBeatles=[]
+featureVectorsBreatney=[]
 
 def get_lyrics_from_csv_by_artist(lyrics_file_name, artists, maximum_songs_number):
     """
@@ -9,6 +13,7 @@ def get_lyrics_from_csv_by_artist(lyrics_file_name, artists, maximum_songs_numbe
     :param maximum_songs_number: maximum song number to be retrieved for each artist
     :return: lyrics of the artists dictionary { "artist": [lyric1, lyric2,..], "artist2": [...] }
     """
+    global result
     fieldnames = ['index', 'song', 'year', 'artist', 'genre', 'lyrics']
     d = {}
     for fn in fieldnames:
@@ -49,6 +54,47 @@ def get_lyrics_from_csv_by_artist(lyrics_file_name, artists, maximum_songs_numbe
 
 pass
 
+def featureVectorBuild(argv):
+   global featureVectorsBeatles
+   global featureVectorsBreatney
+   wordsTop50 = []
+   wordsTop50ToCheck={}
+   with open(sys.argv[2], "r") as fileTop50:
+       for line in fileTop50.readlines():
+           wordsTop50.append(line.replace("\n", ""))
+       fileTop50.close()
+   for element in wordsTop50:
+       wordsTop50ToCheck[element] = 0
+
+   #Beatles
+   resultsForBeatles=result["beatles"]
+   for lyricToCheck in resultsForBeatles:
+       wordsTop50ToCheckTemp=wordsTop50ToCheck
+       lyricToCheckList=lyricToCheck.split()
+       for key,value in wordsTop50ToCheckTemp.items():
+           for lyricToken in lyricToCheckList:
+             if ((key.strip().lower().replace('\'', ''))in (lyricToken.strip().lower())):
+               wordsTop50ToCheckTemp[key]=1
+       featureVectorToAdd=deepcopy(wordsTop50ToCheckTemp)
+       featureVectorsBeatles.insert(len(featureVectorsBeatles),featureVectorToAdd)
+       for element in wordsTop50ToCheckTemp:
+        wordsTop50ToCheckTemp[element] = 0
+
+   #Britny
+   resultsForBreatney=result["britney-spears"]
+   for lyricToCheck in resultsForBreatney:
+       wordsTop50ToCheckTemp=wordsTop50ToCheck
+       lyricToCheckList=lyricToCheck.split()
+       for key,value in wordsTop50ToCheckTemp.items():
+           for lyricToken in lyricToCheckList:
+             if ((key.strip().lower().replace('\'', ''))in (lyricToken.strip().lower())):
+               wordsTop50ToCheckTemp[key]=1
+       featureVectorToAdd=deepcopy(wordsTop50ToCheckTemp)
+       featureVectorsBreatney.insert(len(featureVectorsBreatney),featureVectorToAdd)
+       for element in wordsTop50ToCheckTemp:
+        wordsTop50ToCheckTemp[element] = 0
+
+pass
 
 def feature_classification(argv):
 
@@ -64,4 +110,5 @@ pass
 
 if __name__ == "__main__":
     ##### Questions 1 results
-    feature_classification(sys.argv)
+ feature_classification(sys.argv)
+ featureVectorBuild(sys.argv)
