@@ -58,45 +58,46 @@ def get_lyrics_from_csv_by_artist(lyrics_file_name, artists, maximum_songs_numbe
 
 pass
 
+
 def featureVectorBuild(argv):
-   global featureVectorsBeatles
-   global featureVectorsBreatney
-   wordsTop50 = []
-   wordsTop50ToCheck={}
-   with open(sys.argv[2], "r") as fileTop50:
-       for line in fileTop50.readlines():
-           wordsTop50.append(line.replace("\n", ""))
-       fileTop50.close()
-   for element in wordsTop50:
-       wordsTop50ToCheck[element] = 0
+    global featureVectorsBeatles
+    global featureVectorsBreatney
+    wordsTop50 = []
+    wordsTop50ToCheck={}
+    with open(argv[2], "r") as fileTop50:
+        for line in fileTop50.readlines():
+            wordsTop50.append(line.replace("\n", ""))
+        fileTop50.close()
+    for element in wordsTop50:
+        wordsTop50ToCheck[element] = 0
 
-   #Beatles
-   resultsForBeatles=result["beatles"]
-   for lyricToCheck in resultsForBeatles:
-       wordsTop50ToCheckTemp=wordsTop50ToCheck
-       lyricToCheckList=lyricToCheck.split()
-       for key,value in wordsTop50ToCheckTemp.items():
-           for lyricToken in lyricToCheckList:
-             if ((key.strip().lower().replace('\'', ''))in (lyricToken.strip().lower())):
-               wordsTop50ToCheckTemp[key]=1
-       featureVectorToAdd=deepcopy(wordsTop50ToCheckTemp)
-       featureVectorsBeatles.insert(len(featureVectorsBeatles),featureVectorToAdd)
-       for element in wordsTop50ToCheckTemp:
-        wordsTop50ToCheckTemp[element] = 0
+    #Beatles
+    resultsForBeatles=result["beatles"]
+    for lyricToCheck in resultsForBeatles:
+        wordsTop50ToCheckTemp = wordsTop50ToCheck
+        lyricToCheckList = lyricToCheck.split()
+        for key,value in wordsTop50ToCheckTemp.items():
+            for lyricToken in lyricToCheckList:
+                if (key.strip().lower().replace('\'', ''))in (lyricToken.strip().lower()):
+                    wordsTop50ToCheckTemp[key] = 1
+        featureVectorToAdd = deepcopy(wordsTop50ToCheckTemp)
+        featureVectorsBeatles.insert(len(featureVectorsBeatles),featureVectorToAdd)
+        for element in wordsTop50ToCheckTemp:
+            wordsTop50ToCheckTemp[element] = 0
 
-   #Britny
-   resultsForBreatney=result["britney-spears"]
-   for lyricToCheck in resultsForBreatney:
-       wordsTop50ToCheckTemp=wordsTop50ToCheck
-       lyricToCheckList=lyricToCheck.split()
-       for key,value in wordsTop50ToCheckTemp.items():
-           for lyricToken in lyricToCheckList:
-             if ((key.strip().lower().replace('\'', ''))in (lyricToken.strip().lower())):
-               wordsTop50ToCheckTemp[key]=1
-       featureVectorToAdd=deepcopy(wordsTop50ToCheckTemp)
-       featureVectorsBreatney.insert(len(featureVectorsBreatney),featureVectorToAdd)
-       for element in wordsTop50ToCheckTemp:
-        wordsTop50ToCheckTemp[element] = 0
+    #Britney
+    resultsForBreatney=result["britney-spears"]
+    for lyricToCheck in resultsForBreatney:
+        wordsTop50ToCheckTemp = wordsTop50ToCheck
+        lyricToCheckList = lyricToCheck.split()
+        for key,value in wordsTop50ToCheckTemp.items():
+            for lyricToken in lyricToCheckList:
+                if (key.strip().lower().replace('\'', ''))in (lyricToken.strip().lower()):
+                    wordsTop50ToCheckTemp[key] = 1
+        featureVectorToAdd = deepcopy(wordsTop50ToCheckTemp)
+        featureVectorsBreatney.insert(len(featureVectorsBreatney),featureVectorToAdd)
+        for element in wordsTop50ToCheckTemp:
+            wordsTop50ToCheckTemp[element] = 0
 
 pass
 
