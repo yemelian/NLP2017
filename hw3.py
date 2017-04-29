@@ -1,6 +1,10 @@
 import sys, itertools
 import csv
 from copy import deepcopy
+from sklearn import tree
+from sklearn.svm import SVC
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.neighbors import KNeighborsClassifier
 
 result = {}
 featureVectorsBeatles=[]
@@ -96,6 +100,26 @@ def featureVectorBuild(argv):
 
 pass
 
+def ClassifierSVM():
+    modelSVM = SVC()
+
+pass
+
+def ClassifierNaiveBaseMultinomial():
+    modelNB =  MultinomialNB()
+
+pass
+
+def ClassifierDTree():
+    modelDTree =  tree.DecisionTreeClassifier()
+
+pass
+
+def ClassifierKNN():
+    modelNB =  KNeighborsClassifier()
+
+pass
+
 def feature_classification(argv):
 
     #if len(sys.argv) != 4:
@@ -109,6 +133,11 @@ def feature_classification(argv):
 pass
 
 if __name__ == "__main__":
-    ##### Questions 1 results
+ ##### Questions 1a-1b results
  feature_classification(sys.argv)
  featureVectorBuild(sys.argv)
+ ##### Questions 1c results
+ ClassifierSVM() #SVM(SVC)
+ ClassifierNaiveBaseMultinomial()  #Naive Bayes(MultinomialNB)
+ ClassifierDTree()  #DecisionTree(DecisionTreeClassifier)
+ ClassifierKNN() #KNN(KNeighborsClassifier)
