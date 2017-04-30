@@ -115,24 +115,33 @@ pass
 
 
 def ClassifierSVM(data_points, true_values):
-    trained_svc = SVC(C=100, kernel='linear').fit(data_points, true_values)
+    trained_svc = SVC().fit(data_points, true_values)
     scores = cross_val_score(trained_svc, data_points, true_values, cv=10)
-    print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
+    print("SVM accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
 
 pass
 
-def ClassifierNaiveBaseMultinomial():
-    modelNB = MultinomialNB()
+
+def ClassifierNaiveBaseMultinomial(data_points, true_values):
+    trained_model_nb = MultinomialNB().fit(data_points, true_values)
+    scores = cross_val_score(trained_model_nb, data_points, true_values, cv=10)
+    print("Naive Base accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
 
 pass
 
-def ClassifierDTree():
-    modelDTree = tree.DecisionTreeClassifier()
+
+def ClassifierDTree(data_points, true_values):
+    trained_model_tree = tree.DecisionTreeClassifier().fit(data_points, true_values)
+    scores = cross_val_score(trained_model_tree, data_points, true_values, cv=10)
+    print("Decision tree accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
 
 pass
 
-def ClassifierKNN():
-    modelNB = KNeighborsClassifier()
+
+def ClassifierKNN(data_points, true_values):
+    model_knn = KNeighborsClassifier().fit(data_points, true_values)
+    scores = cross_val_score(model_knn, data_points, true_values, cv=10)
+    print("KNN accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
 
 pass
 
@@ -156,16 +165,24 @@ def feature_classification(argv):
     # merge both feature vectors
     feature_vector_a.extend(feature_vector_b)
 
+    feature_vector = []
+    for index in range(len(feature_vector_a)):
+        feature_vector.append([v for k, v in feature_vector_a[index].items()])
+
 
     # Questions 1c results
     # SVM(SVC)
-    ClassifierSVM(feature_vector_a, true_values)
+
+    ClassifierSVM(feature_vector, true_values)
+
     # Naive Bayes(MultinomialNB)
-    ClassifierNaiveBaseMultinomial()
+    ClassifierNaiveBaseMultinomial(feature_vector, true_values)
+
     # DecisionTree(DecisionTreeClassifier)
-    ClassifierDTree()
+    ClassifierDTree(feature_vector, true_values)
+
     # KNN(KNeighborsClassifier)
-    ClassifierKNN()
+    ClassifierKNN(feature_vector, true_values)
 
 pass
 
