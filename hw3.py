@@ -54,8 +54,6 @@ def get_lyrics_from_csv_by_artist(lyrics_file_name, artists, maximum_songs_numbe
 
         result[artist] = lyrics
 
-    print(result)
-
 pass
 
 
@@ -76,12 +74,12 @@ def featureVectorBuild(argv):
     for lyricToCheck in resultsForBeatles:
         wordsTop50ToCheckTemp = wordsTop50ToCheck
         lyricToCheckList = lyricToCheck.split()
-        for key,value in wordsTop50ToCheckTemp.items():
+        for key in wordsTop50ToCheckTemp.items():
             for lyricToken in lyricToCheckList:
-                if (key.strip().lower().replace('\'', ''))in (lyricToken.strip().lower()):
+                if (key.strip().lower().replace('\'', '')) in (lyricToken.strip().lower()):
                     wordsTop50ToCheckTemp[key] = 1
         featureVectorToAdd = deepcopy(wordsTop50ToCheckTemp)
-        featureVectorsBeatles.insert(len(featureVectorsBeatles),featureVectorToAdd)
+        featureVectorsBeatles.insert(len(featureVectorsBeatles), featureVectorToAdd)
         for element in wordsTop50ToCheckTemp:
             wordsTop50ToCheckTemp[element] = 0
 
@@ -90,12 +88,12 @@ def featureVectorBuild(argv):
     for lyricToCheck in resultsForBreatney:
         wordsTop50ToCheckTemp = wordsTop50ToCheck
         lyricToCheckList = lyricToCheck.split()
-        for key,value in wordsTop50ToCheckTemp.items():
+        for key in wordsTop50ToCheckTemp.items():
             for lyricToken in lyricToCheckList:
-                if (key.strip().lower().replace('\'', ''))in (lyricToken.strip().lower()):
+                if (key.strip().lower().replace('\'', '')) in (lyricToken.strip().lower()):
                     wordsTop50ToCheckTemp[key] = 1
         featureVectorToAdd = deepcopy(wordsTop50ToCheckTemp)
-        featureVectorsBreatney.insert(len(featureVectorsBreatney),featureVectorToAdd)
+        featureVectorsBreatney.insert(len(featureVectorsBreatney), featureVectorToAdd)
         for element in wordsTop50ToCheckTemp:
             wordsTop50ToCheckTemp[element] = 0
 
@@ -107,17 +105,17 @@ def ClassifierSVM():
 pass
 
 def ClassifierNaiveBaseMultinomial():
-    modelNB =  MultinomialNB()
+    modelNB = MultinomialNB()
 
 pass
 
 def ClassifierDTree():
-    modelDTree =  tree.DecisionTreeClassifier()
+    modelDTree = tree.DecisionTreeClassifier()
 
 pass
 
 def ClassifierKNN():
-    modelNB =  KNeighborsClassifier()
+    modelNB = KNeighborsClassifier()
 
 pass
 
@@ -134,11 +132,11 @@ def feature_classification(argv):
 pass
 
 if __name__ == "__main__":
- ##### Questions 1a-1b results
- feature_classification(sys.argv)
- featureVectorBuild(sys.argv)
- ##### Questions 1c results
- ClassifierSVM() #SVM(SVC)
- ClassifierNaiveBaseMultinomial()  #Naive Bayes(MultinomialNB)
- ClassifierDTree()  #DecisionTree(DecisionTreeClassifier)
- ClassifierKNN() #KNN(KNeighborsClassifier)
+    ##### Questions 1a-1b results
+    feature_classification(sys.argv)
+    featureVectorBuild(sys.argv)
+    ##### Questions 1c results
+    ClassifierSVM() #SVM(SVC)
+    ClassifierNaiveBaseMultinomial()  #Naive Bayes(MultinomialNB)
+    ClassifierDTree()  #DecisionTree(DecisionTreeClassifier)
+    ClassifierKNN() #KNN(KNeighborsClassifier)
