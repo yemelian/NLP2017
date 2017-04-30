@@ -8,6 +8,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import cross_val_score
 import string
 import re
+from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer, ENGLISH_STOP_WORDS
 
 
 def get_lyrics_from_csv_by_artist(lyrics_file_name, artists, maximum_songs_number):
@@ -75,8 +76,8 @@ def featureVectorBuild(argv, lyrics_by_artist_dic):
     featureVectorsIncrementedBeatles = []
     featureVectorsAccumuletedBreatney = []
     wordsTop50 = []
-    wordsTop50ToCheck={}
-    wordsTop50ToCheckAccumuleted={}
+    wordsTop50ToCheck = {}
+    wordsTop50ToCheckAccumuleted = {}
     with open(argv[2], "r") as fileTop50:
         for line in fileTop50.readlines():
             wordsTop50.append(line.replace("\n", "").replace("'", "").replace(",", ""))
@@ -110,9 +111,9 @@ def featureVectorBuild(argv, lyrics_by_artist_dic):
             for lyricToken in lyricToCheckList:
                 if (key.strip().lower().replace('\'', '')) in (lyricToken.strip().lower()):
                     wordsTop50ToCheckTemp[key] = 1
-            wordsTop50ToCheckAccumuleted[key]=lyricToCheck.count(key)
+            wordsTop50ToCheckAccumuleted[key] = lyricToCheck.count(key)
         featureVectorToAdd = deepcopy(wordsTop50ToCheckTemp)
-        featureVectorAccumuletedToAdd=deepcopy(wordsTop50ToCheckAccumuleted)
+        featureVectorAccumuletedToAdd = deepcopy(wordsTop50ToCheckAccumuleted)
         featureVectorsBreatney.insert(len(featureVectorsBreatney), featureVectorToAdd)
         featureVectorsAccumuletedBreatney.insert(len(featureVectorsAccumuletedBreatney), featureVectorAccumuletedToAdd)
         for element in wordsTop50ToCheckTemp:
@@ -126,7 +127,7 @@ pass
 def ClassifierSVM(data_points, true_values):
     trained_svc = SVC().fit(data_points, true_values)
     scores = cross_val_score(trained_svc, data_points, true_values, cv=10)
-    print("SVM accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
+    print("accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
 
 pass
 
@@ -134,7 +135,7 @@ pass
 def ClassifierNaiveBaseMultinomial(data_points, true_values):
     trained_model_nb = MultinomialNB().fit(data_points, true_values)
     scores = cross_val_score(trained_model_nb, data_points, true_values, cv=10)
-    print("Naive Base accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
+    print("accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
 
 pass
 
@@ -142,7 +143,7 @@ pass
 def ClassifierDTree(data_points, true_values):
     trained_model_tree = tree.DecisionTreeClassifier().fit(data_points, true_values)
     scores = cross_val_score(trained_model_tree, data_points, true_values, cv=10)
-    print("Decision tree accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
+    print("accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
 
 pass
 
@@ -150,9 +151,10 @@ pass
 def ClassifierKNN(data_points, true_values):
     model_knn = KNeighborsClassifier().fit(data_points, true_values)
     scores = cross_val_score(model_knn, data_points, true_values, cv=10)
-    print("KNN accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
+    print("accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
 
 pass
+
 
 def feature_classification(argv):
 
@@ -165,7 +167,7 @@ def feature_classification(argv):
     lyrics_by_artist_dic = get_lyrics_from_csv_by_artist(lyrics_file_name, ["beatles", "britney-spears"], 400)
 
     # feature vector lyrics of top50 beatles and britney
-    feature_vector_a, feature_vector_b, feature_vector_a_accumulated, feature_vector_b_accumulated = featureVectorBuild(sys.argv, lyrics_by_artist_dic)
+    feature_vector_a, feature_vector_b, feature_vector_a_accumulated, feature_vector_b_accumulated = featureVectorBuild(argv, lyrics_by_artist_dic)
 
     # build true values vector
     true_values = ["beatles" for x in range(len(feature_vector_a))]
@@ -184,31 +186,87 @@ def feature_classification(argv):
     for index in range(len(feature_vector_a_accumulated)):
         feature_vector_accumulated.append([v for k, v in feature_vector_a_accumulated[index].items()])
 
-
-    # Questions 1c results
-    # SVM(SVC)
-
+    print("#####################")
+    print("1. Running 'bag of words' on top50 given words once with binaries fv and one more with occurrences number fv")
+    print("#####################")
+    print("---------------------")
+    print("SVM:")
     ClassifierSVM(feature_vector, true_values)
-    print("Accumulated SVM")
+    print("Accumulated SVM:")
     ClassifierSVM(feature_vector_accumulated, true_values_accumulated)
-
+    print("---------------------")
     # Naive Bayes(MultinomialNB)
+    print("NB:")
     ClassifierNaiveBaseMultinomial(feature_vector, true_values)
-    print("Accumulated NB")
+    print("Accumulated NB:")
     ClassifierNaiveBaseMultinomial(feature_vector_accumulated, true_values_accumulated)
-
+    print("---------------------")
     # DecisionTree(DecisionTreeClassifier)
+    print("DTree:")
     ClassifierDTree(feature_vector, true_values)
-    print("Accumulated DTree")
+    print("Accumulated DTree:")
     ClassifierDTree(feature_vector_accumulated, true_values_accumulated)
-
+    print("---------------------")
     # KNN(KNeighborsClassifier)
+    print("KNN:")
     ClassifierKNN(feature_vector, true_values)
-    print("Accumulated KNN")
+    print("Accumulated KNN:")
     ClassifierKNN(feature_vector_accumulated, true_values_accumulated)
+    print("---------------------\n")
+
+pass
+
+
+def bag_of_words(argv):
+    # lyrics file
+    lyrics_file_name = str(sys.argv[1])
+    lyrics_by_artist_dic = get_lyrics_from_csv_by_artist(lyrics_file_name, ["beatles", "britney-spears"], 400)
+
+    # build true values vector
+    true_values = ["beatles" for x in range(len(lyrics_by_artist_dic['beatles']))]
+    true_values.extend(["britney-spears" for x in range(len(lyrics_by_artist_dic['britney-spears']))])
+
+    # merge lyrics together
+    data = []
+    data.extend(lyrics_by_artist_dic["beatles"])
+    data.extend(lyrics_by_artist_dic["britney-spears"])
+
+    # apply CountVectonizer and tf-idf
+    count_vectorizer = CountVectorizer(stop_words=ENGLISH_STOP_WORDS)
+    transformer = TfidfTransformer()
+    feature_vectors = transformer.fit_transform(count_vectorizer.fit_transform(data).toarray()).toarray()
+
+    print("#####################")
+    print("2. Running bag of words on all words in the lyrics:")
+    print("#####################")
+    print("---------------------")
+    print('Number of unique words: ' + str(len(feature_vectors[0])))
+    print("---------------------")
+
+    # Questions 1a - 1f
+    print("---------------------")
+    print("SVM:")
+    ClassifierSVM(feature_vectors, true_values)
+    print("---------------------")
+    # Naive Bayes(MultinomialNB)
+    print("NB:")
+    ClassifierNaiveBaseMultinomial(feature_vectors, true_values)
+    print("---------------------")
+    # DecisionTree(DecisionTreeClassifier)
+    print("DTree:")
+    ClassifierDTree(feature_vectors, true_values)
+    print("---------------------")
+    # KNN(KNeighborsClassifier)
+    print("KNN:")
+    ClassifierKNN(feature_vectors, true_values)
+    print("---------------------\n")
+
+    # for index in range(len(features_vector)):
+    #     print(features_vector[index])
+    #     print(len(features_vector[index]))
 
 pass
 
 if __name__ == "__main__":
-    ##### Questions 1a-1b results
- feature_classification(sys.argv)
+    feature_classification(sys.argv)
+    bag_of_words(sys.argv)
