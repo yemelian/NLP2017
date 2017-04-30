@@ -5,12 +5,9 @@ from sklearn import tree
 from sklearn.svm import SVC
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import cross_val_score
 import string
 import re
-
-result = {}
-featureVectorsBeatles=[]
-featureVectorsBreatney=[]
 
 
 def get_lyrics_from_csv_by_artist(lyrics_file_name, artists, maximum_songs_number):
@@ -56,7 +53,7 @@ def get_lyrics_from_csv_by_artist(lyrics_file_name, artists, maximum_songs_numbe
 
         result[artist] = lyrics
 
-    print(len(result['beatles']))
+    return result
 
 pass
 
@@ -72,9 +69,9 @@ def split_and_remove_punctuations(lyrics):
 pass
 
 
-def featureVectorBuild(argv):
-    global featureVectorsBeatles
-    global featureVectorsBreatney
+def featureVectorBuild(argv, lyrics_by_artist_dic):
+    featureVectorsBeatles = []
+    featureVectorsBreatney = []
     wordsTop50 = []
     wordsTop50ToCheck={}
     with open(argv[2], "r") as fileTop50:
@@ -85,7 +82,7 @@ def featureVectorBuild(argv):
         wordsTop50ToCheck[element] = 0
 
     # Beatles
-    resultsForBeatles=result["beatles"]
+    resultsForBeatles = lyrics_by_artist_dic["beatles"]
     for lyricToCheck in resultsForBeatles:
         wordsTop50ToCheckTemp = wordsTop50ToCheck
         lyricToCheckList = split_and_remove_punctuations(lyricToCheck)
@@ -98,11 +95,8 @@ def featureVectorBuild(argv):
         for element in wordsTop50ToCheckTemp:
             wordsTop50ToCheckTemp[element] = 0
 
-    print(featureVectorsBeatles)
-    print(len(featureVectorsBeatles))
-
     # Britney
-    resultsForBreatney=result["britney-spears"]
+    resultsForBreatney = lyrics_by_artist_dic["britney-spears"]
     for lyricToCheck in resultsForBreatney:
         wordsTop50ToCheckTemp = wordsTop50ToCheck
         lyricToCheckList = split_and_remove_punctuations(lyricToCheck)
@@ -115,11 +109,15 @@ def featureVectorBuild(argv):
         for element in wordsTop50ToCheckTemp:
             wordsTop50ToCheckTemp[element] = 0
 
+    return featureVectorsBeatles, featureVectorsBreatney
+
 pass
 
 
-def ClassifierSVM():
-    modelSVM = SVC()
+def ClassifierSVM(data_points, true_values):
+    trained_svc = SVC(C=100, kernel='linear').fit(data_points, true_values)
+    scores = cross_val_score(trained_svc, data_points, true_values, cv=10)
+    print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
 
 pass
 
@@ -146,16 +144,31 @@ def feature_classification(argv):
 
     # lyrics file
     lyrics_file_name = str(sys.argv[1])
-    get_lyrics_from_csv_by_artist(lyrics_file_name, ["beatles", "britney-spears"], 400)
+    lyrics_by_artist_dic = get_lyrics_from_csv_by_artist(lyrics_file_name, ["beatles", "britney-spears"], 400)
+
+    # feature vector lyrics of top50 beatles and britney
+    feature_vector_a, feature_vector_b = featureVectorBuild(sys.argv, lyrics_by_artist_dic)
+
+    # build true values vector
+    true_values = ["beatles" for x in range(len(feature_vector_a))]
+    true_values.extend(["britney-spears" for x in range(len(feature_vector_b))])
+
+    # merge both feature vectors
+    feature_vector_a.extend(feature_vector_b)
+
+
+    # Questions 1c results
+    # SVM(SVC)
+    ClassifierSVM(feature_vector_a, true_values)
+    # Naive Bayes(MultinomialNB)
+    ClassifierNaiveBaseMultinomial()
+    # DecisionTree(DecisionTreeClassifier)
+    ClassifierDTree()
+    # KNN(KNeighborsClassifier)
+    ClassifierKNN()
 
 pass
 
 if __name__ == "__main__":
     ##### Questions 1a-1b results
     feature_classification(sys.argv)
-    featureVectorBuild(sys.argv)
-    ##### Questions 1c results
-    ClassifierSVM() #SVM(SVC)
-    ClassifierNaiveBaseMultinomial()  #Naive Bayes(MultinomialNB)
-    ClassifierDTree()  #DecisionTree(DecisionTreeClassifier)
-    ClassifierKNN() #KNN(KNeighborsClassifier)
