@@ -12,6 +12,7 @@ result = {}
 featureVectorsBeatles=[]
 featureVectorsBreatney=[]
 
+
 def get_lyrics_from_csv_by_artist(lyrics_file_name, artists, maximum_songs_number):
     """
     :param lyrics_file_name: lyrics csv file name to be parsed
@@ -46,15 +47,16 @@ def get_lyrics_from_csv_by_artist(lyrics_file_name, artists, maximum_songs_numbe
             if index == 0:
                 continue
             if d["artist"][index] == artist:
-                ++songs_retrieved
-                # break the artist's inner loop
-                if songs_retrieved > maximum_songs_number:
-                    break
-                else:
-                    # lyrics.append(d["lyrics"][index])
+                if songs_retrieved < maximum_songs_number:
                     lyrics.append(d["lyrics"][index].replace('\n', ' '))
+                    songs_retrieved += 1
+                # break the artist's inner loop
+                else:
+                    break
 
         result[artist] = lyrics
+
+    print(len(result['beatles']))
 
 pass
 
@@ -96,6 +98,8 @@ def featureVectorBuild(argv):
         for element in wordsTop50ToCheckTemp:
             wordsTop50ToCheckTemp[element] = 0
 
+    print(featureVectorsBeatles)
+    print(len(featureVectorsBeatles))
 
     # Britney
     resultsForBreatney=result["britney-spears"]
@@ -112,6 +116,7 @@ def featureVectorBuild(argv):
             wordsTop50ToCheckTemp[element] = 0
 
 pass
+
 
 def ClassifierSVM():
     modelSVM = SVC()
