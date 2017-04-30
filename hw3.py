@@ -72,8 +72,11 @@ pass
 def featureVectorBuild(argv, lyrics_by_artist_dic):
     featureVectorsBeatles = []
     featureVectorsBreatney = []
+    featureVectorsIncrementedBeatles = []
+    featureVectorsAccumuletedBreatney = []
     wordsTop50 = []
     wordsTop50ToCheck={}
+    wordsTop50ToCheckAccumuleted={}
     with open(argv[2], "r") as fileTop50:
         for line in fileTop50.readlines():
             wordsTop50.append(line.replace("\n", "").replace("'", "").replace(",", ""))
@@ -90,8 +93,11 @@ def featureVectorBuild(argv, lyrics_by_artist_dic):
             for lyricToken in lyricToCheckList:
                 if (key.strip().lower().replace('\'', '')) in (lyricToken.strip().lower()):
                     wordsTop50ToCheckTemp[key] = 1
+            wordsTop50ToCheckAccumuleted[key] = lyricToCheck.count(key)
         featureVectorToAdd = deepcopy(wordsTop50ToCheckTemp)
+        featureVectorAccumuletedToAdd = deepcopy(wordsTop50ToCheckAccumuleted)
         featureVectorsBeatles.insert(len(featureVectorsBeatles), featureVectorToAdd)
+        featureVectorsIncrementedBeatles.insert(len(featureVectorsIncrementedBeatles), featureVectorAccumuletedToAdd)
         for element in wordsTop50ToCheckTemp:
             wordsTop50ToCheckTemp[element] = 0
 
@@ -104,12 +110,15 @@ def featureVectorBuild(argv, lyrics_by_artist_dic):
             for lyricToken in lyricToCheckList:
                 if (key.strip().lower().replace('\'', '')) in (lyricToken.strip().lower()):
                     wordsTop50ToCheckTemp[key] = 1
+            wordsTop50ToCheckAccumuleted[key]=lyricToCheck.count(key)
         featureVectorToAdd = deepcopy(wordsTop50ToCheckTemp)
+        featureVectorAccumuletedToAdd=deepcopy(wordsTop50ToCheckAccumuleted)
         featureVectorsBreatney.insert(len(featureVectorsBreatney), featureVectorToAdd)
+        featureVectorsAccumuletedBreatney.insert(len(featureVectorsAccumuletedBreatney), featureVectorAccumuletedToAdd)
         for element in wordsTop50ToCheckTemp:
             wordsTop50ToCheckTemp[element] = 0
 
-    return featureVectorsBeatles, featureVectorsBreatney
+    return featureVectorsBeatles, featureVectorsBreatney, featureVectorsIncrementedBeatles, featureVectorsAccumuletedBreatney
 
 pass
 
@@ -156,36 +165,50 @@ def feature_classification(argv):
     lyrics_by_artist_dic = get_lyrics_from_csv_by_artist(lyrics_file_name, ["beatles", "britney-spears"], 400)
 
     # feature vector lyrics of top50 beatles and britney
-    feature_vector_a, feature_vector_b = featureVectorBuild(sys.argv, lyrics_by_artist_dic)
+    feature_vector_a, feature_vector_b, feature_vector_a_accumulated, feature_vector_b_accumulated = featureVectorBuild(sys.argv, lyrics_by_artist_dic)
 
     # build true values vector
     true_values = ["beatles" for x in range(len(feature_vector_a))]
     true_values.extend(["britney-spears" for x in range(len(feature_vector_b))])
+    true_values_accumulated = ["beatles" for x in range(len(feature_vector_a_accumulated))]
+    true_values_accumulated.extend(["britney-spears" for x in range(len(feature_vector_b_accumulated))])
 
     # merge both feature vectors
     feature_vector_a.extend(feature_vector_b)
+    feature_vector_a_accumulated.extend(feature_vector_b_accumulated)
 
     feature_vector = []
     for index in range(len(feature_vector_a)):
         feature_vector.append([v for k, v in feature_vector_a[index].items()])
+    feature_vector_accumulated = []
+    for index in range(len(feature_vector_a_accumulated)):
+        feature_vector_accumulated.append([v for k, v in feature_vector_a_accumulated[index].items()])
 
 
     # Questions 1c results
     # SVM(SVC)
 
     ClassifierSVM(feature_vector, true_values)
+    print("Accumulated SVM")
+    ClassifierSVM(feature_vector_accumulated, true_values_accumulated)
 
     # Naive Bayes(MultinomialNB)
     ClassifierNaiveBaseMultinomial(feature_vector, true_values)
+    print("Accumulated NB")
+    ClassifierNaiveBaseMultinomial(feature_vector_accumulated, true_values_accumulated)
 
     # DecisionTree(DecisionTreeClassifier)
     ClassifierDTree(feature_vector, true_values)
+    print("Accumulated DTree")
+    ClassifierDTree(feature_vector_accumulated, true_values_accumulated)
 
     # KNN(KNeighborsClassifier)
     ClassifierKNN(feature_vector, true_values)
+    print("Accumulated KNN")
+    ClassifierKNN(feature_vector_accumulated, true_values_accumulated)
 
 pass
 
 if __name__ == "__main__":
     ##### Questions 1a-1b results
-    feature_classification(sys.argv)
+ feature_classification(sys.argv)
