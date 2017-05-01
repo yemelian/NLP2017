@@ -1,4 +1,6 @@
-import sys, itertools
+import sys
+import itertools
+import io
 import csv
 from copy import deepcopy
 from sklearn import tree
@@ -7,8 +9,9 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import cross_val_score
 import string
-import re
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer, ENGLISH_STOP_WORDS
+from sklearn.feature_selection import SelectKBest
+import numpy as np
 
 
 def get_lyrics_from_csv_by_artist(lyrics_file_name, artists, maximum_songs_number):
@@ -18,7 +21,6 @@ def get_lyrics_from_csv_by_artist(lyrics_file_name, artists, maximum_songs_numbe
     :param maximum_songs_number: maximum song number to be retrieved for each artist
     :return: lyrics of the artists dictionary { "artist": [lyric1, lyric2,..], "artist2": [...] }
     """
-    global result
     fieldnames = ['index', 'song', 'year', 'artist', 'genre', 'lyrics']
     d = {}
     for fn in fieldnames:
@@ -158,10 +160,6 @@ pass
 
 def feature_classification(argv):
 
-    #if len(sys.argv) != 4:
-    #   sys.exit('Invalid argument number!, please make sure you run the the command as follow: python hw3.py'
-    #             '<input_file> <words_file_input_path> <best_words_file_output_path>')
-
     # lyrics file
     lyrics_file_name = str(sys.argv[1])
     lyrics_by_artist_dic = get_lyrics_from_csv_by_artist(lyrics_file_name, ["beatles", "britney-spears"], 400)
@@ -217,7 +215,7 @@ def feature_classification(argv):
 pass
 
 
-def bag_of_words(argv):
+def bag_of_words(argv, voc=None):
     # lyrics file
     lyrics_file_name = str(sys.argv[1])
     lyrics_by_artist_dic = get_lyrics_from_csv_by_artist(lyrics_file_name, ["beatles", "britney-spears"], 400)
@@ -232,12 +230,15 @@ def bag_of_words(argv):
     data.extend(lyrics_by_artist_dic["britney-spears"])
 
     # apply CountVectonizer and tf-idf
-    count_vectorizer = CountVectorizer(stop_words=ENGLISH_STOP_WORDS)
+    count_vectorizer = CountVectorizer(stop_words=ENGLISH_STOP_WORDS, vocabulary=voc)
     transformer = TfidfTransformer()
     feature_vectors = transformer.fit_transform(count_vectorizer.fit_transform(data).toarray()).toarray()
 
     print("#####################")
-    print("2. Running bag of words on all words in the lyrics:")
+    if voc is None:
+        print("2. Running bag of words on all words in the lyrics:")
+    else:
+        print("4. Running bag of words on selected best features:")
     print("#####################")
     print("---------------------")
     print('Number of unique words: ' + str(len(feature_vectors[0])))
@@ -261,12 +262,65 @@ def bag_of_words(argv):
     ClassifierKNN(feature_vectors, true_values)
     print("---------------------\n")
 
-    # for index in range(len(features_vector)):
-    #     print(features_vector[index])
-    #     print(len(features_vector[index]))
+pass
+
+
+def select_k_best(argv, k_best=50):
+
+    # lyrics file
+    lyrics_file_name = str(argv[1])
+    lyrics_by_artist_dic = get_lyrics_from_csv_by_artist(lyrics_file_name, ["beatles", "britney-spears"], 400)
+
+    # build true values vector
+    true_values = ["beatles" for x in range(len(lyrics_by_artist_dic['beatles']))]
+    true_values.extend(["britney-spears" for x in range(len(lyrics_by_artist_dic['britney-spears']))])
+
+    # merge lyrics together
+    data = []
+    data.extend(lyrics_by_artist_dic["beatles"])
+    data.extend(lyrics_by_artist_dic["britney-spears"])
+
+    # apply CountVectonizer and tf-idf
+    count_vectorizer = CountVectorizer(stop_words=ENGLISH_STOP_WORDS)
+    transformer = TfidfTransformer()
+    feature_vectors = transformer.fit_transform(count_vectorizer.fit_transform(data).toarray()).toarray()
+    k_best_select = SelectKBest(k=k_best)
+    k_best_select.fit_transform(feature_vectors, true_values)
+    k_best_index = k_best_select.get_support()
+
+    k_best_words = np.asarray(count_vectorizer.get_feature_names())[k_best_select.get_support()]
+
+    file_output_path = str(argv[3])
+    file = io.open(file_output_path, 'w+', encoding='utf8')
+
+    for word in k_best_words:
+        file.write("'" + word + "'," + "\n")
+    file.close()
+
+    return k_best_words
+
+pass
+
+
+def custom_classification(argv):
+
+    # lyrics file
+    lyrics_file_name = str(argv[1])
+    lyrics_by_artist_dic = get_lyrics_from_csv_by_artist(lyrics_file_name, ["etta-james", "bob-dylan"], 400)
+
+
 
 pass
 
 if __name__ == "__main__":
-    feature_classification(sys.argv)
-    bag_of_words(sys.argv)
+
+    if len(sys.argv) != 4:
+        sys.exit('Invalid argument number!, please make sure you run the the command as follow: python hw3.py'
+                 '<input_file> <words_file_input_path> <best_words_file_output_path>')
+
+    # feature_classification(sys.argv)
+    # bag_of_words(sys.argv)
+    # k_best_words = select_k_best(sys.argv, 50)
+    # bag_of_words(sys.argv, k_best_words)
+    custom_classification(sys.argv,)
+
