@@ -286,7 +286,6 @@ def select_k_best(argv, k_best=50):
     feature_vectors = transformer.fit_transform(count_vectorizer.fit_transform(data).toarray()).toarray()
     k_best_select = SelectKBest(k=k_best)
     k_best_select.fit_transform(feature_vectors, true_values)
-    k_best_index = k_best_select.get_support()
 
     k_best_words = np.asarray(count_vectorizer.get_feature_names())[k_best_select.get_support()]
 
@@ -308,6 +307,62 @@ def custom_classification(argv):
     lyrics_file_name = str(argv[1])
     lyrics_by_artist_dic = get_lyrics_from_csv_by_artist(lyrics_file_name, ["etta-james", "bob-dylan"], 400)
 
+    # build true values vector
+    true_values = ["etta-james" for x in range(len(lyrics_by_artist_dic['etta-james']))]
+    true_values.extend(["bob-dylan" for x in range(len(lyrics_by_artist_dic['bob-dylan']))])
+
+    # merge lyrics together
+    data = []
+    data.extend(lyrics_by_artist_dic["etta-james"])
+    data.extend(lyrics_by_artist_dic["bob-dylan"])
+
+    # apply CountVectonizer and tf-idf
+    count_vectorizer = CountVectorizer(stop_words=ENGLISH_STOP_WORDS)
+    transformer = TfidfTransformer()
+    feature_vectors = transformer.fit_transform(count_vectorizer.fit_transform(data).toarray()).toarray()
+    k_best_select = SelectKBest(k=50)
+    k_best_select.fit_transform(feature_vectors, true_values)
+
+    k_best_words = np.asarray(count_vectorizer.get_feature_names())[k_best_select.get_support()]
+
+    file_output_path = str("wordsCustom.txt")
+    file = io.open(file_output_path, 'w+', encoding='utf8')
+
+    for word in k_best_words:
+        file.write("'" + word + "'," + "\n")
+    file.close()
+
+    words30 = []
+    with open("love30words.txt", "r") as file30:
+        for line in file30.readlines():
+            words30.append(line.replace("\n", "").replace("'", "").replace(",", ""))
+            file30.close()
+
+
+    # apply CountVectonizer and tf-idf
+    count_vectorizer = CountVectorizer(stop_words=ENGLISH_STOP_WORDS, vocabulary=words30)
+    transformer = TfidfTransformer()
+    feature_vectors = transformer.fit_transform(count_vectorizer.fit_transform(data).toarray()).toarray()
+
+    print("#####################")
+    print("5. Running bag of words on selected love words as features:")
+    print("#####################")
+    print("---------------------")
+    print("SVM:")
+    ClassifierSVM(feature_vectors, true_values)
+    print("---------------------")
+    # Naive Bayes(MultinomialNB)
+    print("NB:")
+    ClassifierNaiveBaseMultinomial(feature_vectors, true_values)
+    print("---------------------")
+    # DecisionTree(DecisionTreeClassifier)
+    print("DTree:")
+    ClassifierDTree(feature_vectors, true_values)
+    print("---------------------")
+    # KNN(KNeighborsClassifier)
+    print("KNN:")
+    ClassifierKNN(feature_vectors, true_values)
+    print("---------------------\n")
 
 
 pass
@@ -318,9 +373,9 @@ if __name__ == "__main__":
         sys.exit('Invalid argument number!, please make sure you run the the command as follow: python hw3.py'
                  '<input_file> <words_file_input_path> <best_words_file_output_path>')
 
-    # feature_classification(sys.argv)
-    # bag_of_words(sys.argv)
-    # k_best_words = select_k_best(sys.argv, 50)
-    # bag_of_words(sys.argv, k_best_words)
+    feature_classification(sys.argv)
+    bag_of_words(sys.argv)
+    k_best_words = select_k_best(sys.argv, 50)
+    bag_of_words(sys.argv, k_best_words)
     custom_classification(sys.argv,)
 
