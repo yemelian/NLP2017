@@ -237,12 +237,12 @@ def bag_of_words(argv, voc=None):
     print("#####################")
     if voc is None:
         print("2. Running bag of words on all words in the lyrics:")
+        print("#####################")
+        print("---------------------")
+        print('Number of unique words: ' + str(len(feature_vectors[0])))
     else:
         print("4. Running bag of words on selected best features:")
-    print("#####################")
-    print("---------------------")
-    print('Number of unique words: ' + str(len(feature_vectors[0])))
-    print("---------------------")
+        print("#####################")
 
     # Questions 1a - 1f
     print("---------------------")
@@ -305,15 +305,15 @@ def custom_classification(argv):
 
     # lyrics file
     lyrics_file_name = str(argv[1])
-    lyrics_by_artist_dic = get_lyrics_from_csv_by_artist(lyrics_file_name, ["etta-james", "bob-dylan"], 400)
+    lyrics_by_artist_dic = get_lyrics_from_csv_by_artist(lyrics_file_name, ["beyonce", "bob-dylan"], 400)
 
     # build true values vector
-    true_values = ["etta-james" for x in range(len(lyrics_by_artist_dic['etta-james']))]
+    true_values = ["beyonce" for x in range(len(lyrics_by_artist_dic['beyonce']))]
     true_values.extend(["bob-dylan" for x in range(len(lyrics_by_artist_dic['bob-dylan']))])
 
     # merge lyrics together
     data = []
-    data.extend(lyrics_by_artist_dic["etta-james"])
+    data.extend(lyrics_by_artist_dic["beyonce"])
     data.extend(lyrics_by_artist_dic["bob-dylan"])
 
     # apply CountVectonizer and tf-idf
@@ -323,14 +323,14 @@ def custom_classification(argv):
     k_best_select = SelectKBest(k=50)
     k_best_select.fit_transform(feature_vectors, true_values)
 
-    k_best_words = np.asarray(count_vectorizer.get_feature_names())[k_best_select.get_support()]
-
-    file_output_path = str("wordsCustom.txt")
-    file = io.open(file_output_path, 'w+', encoding='utf8')
-
-    for word in k_best_words:
-        file.write("'" + word + "'," + "\n")
-    file.close()
+    # get features names
+    # k_best_words = np.asarray(count_vectorizer.get_feature_names())[k_best_select.get_support()]
+    # file_output_path = str("wordsCustom.txt")
+    # file = io.open(file_output_path, 'w+', encoding='utf8')
+    #
+    # for word in k_best_words:
+    #     file.write("'" + word + "'," + "\n")
+    # file.close()
 
     words30 = []
     with open("love30words.txt", "r") as file30:
@@ -373,9 +373,8 @@ if __name__ == "__main__":
         sys.exit('Invalid argument number!, please make sure you run the the command as follow: python hw3.py'
                  '<input_file> <words_file_input_path> <best_words_file_output_path>')
 
-    feature_classification(sys.argv)
-    bag_of_words(sys.argv)
-    k_best_words = select_k_best(sys.argv, 50)
-    bag_of_words(sys.argv, k_best_words)
+    # feature_classification(sys.argv)
+    # bag_of_words(sys.argv)
+    # k_best_words = select_k_best(sys.argv, 50)
+    # bag_of_words(sys.argv, k_best_words)
     custom_classification(sys.argv,)
-

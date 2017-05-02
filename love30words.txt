@@ -3,7 +3,7 @@
 ‘magic’,
 ‘baby’,
 ‘sugar’,
-‘died’,
+‘sexy’,
 'thinking',
 ‘about’,
 ‘you’,
@@ -27,4 +27,7 @@
 ‘pretty’,
 ‘oh’,
 ‘makes’,
-‘me’
+‘me’,
+‘forever’,
+‘best’,
+‘much’
