@@ -39,9 +39,9 @@ def get_lyrics_from_csv_by_artist(lyrics_file_name, artists, maximum_songs_numbe
     for artist_idx in range(len(artists)):
 
         lyrics = []
+        genres = []
         songs_retrieved = 0
         artist = artists[artist_idx]
-
         for index in range(len(d["artist"])):
             # skip first index, since it is the column name e.g (index, genre, artist..)
             if index == 0:
@@ -49,12 +49,14 @@ def get_lyrics_from_csv_by_artist(lyrics_file_name, artists, maximum_songs_numbe
             if d["artist"][index] == artist:
                 if songs_retrieved < maximum_songs_number:
                     lyrics.append(d["lyrics"][index].replace('\n', ' '))
+                    genres.append(d["genre"][index])
                     songs_retrieved += 1
                 # break the artist's inner loop
                 else:
                     break
 
         result[artist] = lyrics
+        result[artist + "_geners"] = genres
 
     return result
 
@@ -308,8 +310,10 @@ def custom_classification(argv):
     lyrics_by_artist_dic = get_lyrics_from_csv_by_artist(lyrics_file_name, ["beyonce", "bob-dylan"], 400)
 
     # build true values vector
-    true_values = ["beyonce" for x in range(len(lyrics_by_artist_dic['beyonce']))]
-    true_values.extend(["bob-dylan" for x in range(len(lyrics_by_artist_dic['bob-dylan']))])
+    true_values = [lyrics_by_artist_dic['beyonce_geners'][x] for x in range(len(lyrics_by_artist_dic['beyonce_geners']))]
+    true_values.extend([lyrics_by_artist_dic['bob-dylan_geners'][x] for x in range(len(lyrics_by_artist_dic['bob-dylan_geners']))])
+
+    print(true_values)
 
     # merge lyrics together
     data = []
@@ -324,7 +328,7 @@ def custom_classification(argv):
     k_best_select.fit_transform(feature_vectors, true_values)
 
     # get features names
-    # k_best_words = np.asarray(count_vectorizer.get_feature_names())[k_best_select.get_support()]
+    k_best_words = np.asarray(count_vectorizer.get_feature_names())[k_best_select.get_support()]
     # file_output_path = str("wordsCustom.txt")
     # file = io.open(file_output_path, 'w+', encoding='utf8')
     #
@@ -332,20 +336,20 @@ def custom_classification(argv):
     #     file.write("'" + word + "'," + "\n")
     # file.close()
 
-    words30 = []
-    with open("love30words.txt", "r") as file30:
-        for line in file30.readlines():
-            words30.append(line.replace("\n", "").replace("'", "").replace(",", ""))
-            file30.close()
+    # words30 = []
+    # with open("love30words.txt", "r") as file30:
+    #     for line in file30.readlines():
+    #         words30.append(line.replace("\n", "").replace("'", "").replace(",", ""))
+    #         file30.close()
 
 
     # apply CountVectonizer and tf-idf
-    count_vectorizer = CountVectorizer(stop_words=ENGLISH_STOP_WORDS, vocabulary=words30)
+    count_vectorizer = CountVectorizer(stop_words=ENGLISH_STOP_WORDS, vocabulary=k_best_words)
     transformer = TfidfTransformer()
     feature_vectors = transformer.fit_transform(count_vectorizer.fit_transform(data).toarray()).toarray()
 
     print("#####################")
-    print("5. Running bag of words on selected love words as features:")
+    print("5. Running bag of words on 50 K Best as features to classify songs lyrics by genres:")
     print("#####################")
     print("---------------------")
     print("SVM:")
@@ -373,8 +377,8 @@ if __name__ == "__main__":
         sys.exit('Invalid argument number!, please make sure you run the the command as follow: python hw3.py'
                  '<input_file> <words_file_input_path> <best_words_file_output_path>')
 
-    # feature_classification(sys.argv)
-    # bag_of_words(sys.argv)
-    # k_best_words = select_k_best(sys.argv, 50)
-    # bag_of_words(sys.argv, k_best_words)
+    feature_classification(sys.argv)
+    bag_of_words(sys.argv)
+    k_best_words = select_k_best(sys.argv, 50)
+    bag_of_words(sys.argv, k_best_words)
     custom_classification(sys.argv,)
