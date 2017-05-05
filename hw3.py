@@ -64,7 +64,10 @@ pass
 
 
 def split_and_remove_punctuations(lyrics):
-
+    """
+    :param lyrics: lyrics text
+    :return: lyrics without puncuations
+    """
     lyrics = lyrics.split()
 
     for i in range(len(lyrics)):
@@ -348,13 +351,6 @@ def custom_classification(argv):
     # for word in k_best_words:
     #     file.write("'" + word + "'," + "\n")
     # file.close()
-
-    # words30 = []
-    # with open("love30words.txt", "r") as file30:
-    #     for line in file30.readlines():
-    #         words30.append(line.replace("\n", "").replace("'", "").replace(",", ""))
-    #         file30.close()
-
 
     # apply CountVectonizer and tf-idf
     count_vectorizer = CountVectorizer(stop_words=ENGLISH_STOP_WORDS, vocabulary=k_best_words)
