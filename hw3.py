@@ -166,8 +166,12 @@ def feature_classification(argv):
     lyrics_file_name = str(sys.argv[1])
     lyrics_by_artist_dic = get_lyrics_from_csv_by_artist(lyrics_file_name, ["beatles", "britney-spears"], 400)
 
+    lyrics_by_artist_dic['beatles'] = [var for var in lyrics_by_artist_dic['beatles'] if var]
+    lyrics_by_artist_dic['britney-spears'] = [var for var in lyrics_by_artist_dic['britney-spears'] if var]
+
     # feature vector lyrics of top50 beatles and britney
-    feature_vector_a, feature_vector_b, feature_vector_a_accumulated, feature_vector_b_accumulated = featureVectorBuild(argv, lyrics_by_artist_dic)
+    feature_vector_a, feature_vector_b, feature_vector_a_accumulated, feature_vector_b_accumulated = \
+        featureVectorBuild(argv, lyrics_by_artist_dic)
 
     # build true values vector
     true_values = ["beatles" for x in range(len(feature_vector_a))]
@@ -222,6 +226,9 @@ def bag_of_words(argv, voc=None):
     lyrics_file_name = str(sys.argv[1])
     lyrics_by_artist_dic = get_lyrics_from_csv_by_artist(lyrics_file_name, ["beatles", "britney-spears"], 400)
 
+    lyrics_by_artist_dic['beatles'] = [var for var in lyrics_by_artist_dic['beatles'] if var]
+    lyrics_by_artist_dic['britney-spears'] = [var for var in lyrics_by_artist_dic['britney-spears'] if var]
+
     # build true values vector
     true_values = ["beatles" for x in range(len(lyrics_by_artist_dic['beatles']))]
     true_values.extend(["britney-spears" for x in range(len(lyrics_by_artist_dic['britney-spears']))])
@@ -230,6 +237,8 @@ def bag_of_words(argv, voc=None):
     data = []
     data.extend(lyrics_by_artist_dic["beatles"])
     data.extend(lyrics_by_artist_dic["britney-spears"])
+
+    data = [var for var in data if var]
 
     # apply CountVectonizer and tf-idf
     count_vectorizer = CountVectorizer(stop_words=ENGLISH_STOP_WORDS, vocabulary=voc)
@@ -273,6 +282,9 @@ def select_k_best(argv, k_best=50):
     lyrics_file_name = str(argv[1])
     lyrics_by_artist_dic = get_lyrics_from_csv_by_artist(lyrics_file_name, ["beatles", "britney-spears"], 400)
 
+    lyrics_by_artist_dic['beatles'] = [var for var in lyrics_by_artist_dic['beatles'] if var]
+    lyrics_by_artist_dic['britney-spears'] = [var for var in lyrics_by_artist_dic['britney-spears'] if var]
+
     # build true values vector
     true_values = ["beatles" for x in range(len(lyrics_by_artist_dic['beatles']))]
     true_values.extend(["britney-spears" for x in range(len(lyrics_by_artist_dic['britney-spears']))])
@@ -309,11 +321,12 @@ def custom_classification(argv):
     lyrics_file_name = str(argv[1])
     lyrics_by_artist_dic = get_lyrics_from_csv_by_artist(lyrics_file_name, ["beyonce", "bob-dylan"], 400)
 
+    # lyrics_by_artist_dic['beyonce'] = [var for var in lyrics_by_artist_dic['beyonce'] if var]
+    # lyrics_by_artist_dic['bob-dylan'] = [var for var in lyrics_by_artist_dic['bob-dylan'] if var]
+
     # build true values vector
     true_values = [lyrics_by_artist_dic['beyonce_geners'][x] for x in range(len(lyrics_by_artist_dic['beyonce_geners']))]
     true_values.extend([lyrics_by_artist_dic['bob-dylan_geners'][x] for x in range(len(lyrics_by_artist_dic['bob-dylan_geners']))])
-
-    print(true_values)
 
     # merge lyrics together
     data = []
