@@ -16,7 +16,7 @@ from gensim import models
 
 def loadEmbeddingsFile(argv):
 
-    # lyrics file
+    # Loading: wiki.en.100k.vec
     w=models.KeyedVectors.load_word2vec_format('wiki.en.100k.vec', binary=False)
 
 pass
