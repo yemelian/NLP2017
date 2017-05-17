@@ -4,25 +4,30 @@ from copy import deepcopy
 from sklearn.linear_model import linearregression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import cross_val_score
-import string
+import xml.etree.ElementTree as ET
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer, ENGLISH_STOP_WORDS
 from sklearn.feature_selection import SelectKBest
 from gensim import models
+from auxiliary_class import Instance
+
+all_instances= []
 
 def ClassifierLinearRegression(data_points, true_values):
-    trained_lr = linearregression().fit(data_points, true_values)
-    scores = cross_val_score(trained_lr, data_points, true_values, cv=10)
+    trained_svc = linearregression().fit(data_points, true_values)
+    scores = cross_val_score(trained_svc, data_points, true_values, cv=10)
     print("accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
 
 pass
 
 def bag_of_words(argv, voc=None):
-    # lyrics file
-    lyrics_file_name = str(sys.argv[1])
-    lyrics_by_artist_dic = get_lyrics_from_csv_by_artist(lyrics_file_name, ["beatles", "britney-spears"], 400)
-
-    lyrics_by_artist_dic['beatles'] = [var for var in lyrics_by_artist_dic['beatles'] if var]
-    lyrics_by_artist_dic['britney-spears'] = [var for var in lyrics_by_artist_dic['britney-spears'] if var]
+    global all_instances
+    etree = ET.parse(str(sys.argv[1]))
+    root = etree.getroot()
+    instances = root.findall(".//instance")
+    for element in instances:
+        instance = Instance()
+        instance.parsing_instance_to_object(element)
+    all_instances.append(instance)
 
     # build true values vector
     true_values = ["beatles" for x in range(len(lyrics_by_artist_dic['beatles']))]
