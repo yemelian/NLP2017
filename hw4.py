@@ -1,5 +1,6 @@
 import sys
 import nltk
+import string
 from copy import deepcopy
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
@@ -11,6 +12,20 @@ from gensim import models
 
 tokensForFeatures={}
 all_instances= []
+wordsToCheck={}
+contextDataList=[]
+featureVectors = []
+featureVectorsIncremented = []
+
+def split_and_remove_punctuations(lyrics):
+
+    lyrics = lyrics.split()
+
+    for i in range(len(lyrics)):
+        lyrics[i] = lyrics[i].strip(string.punctuation)
+
+    return lyrics
+pass
 
 def ClassifierLinearRegression(data_points, true_values):
     trained_svc = LogisticRegression().fit(data_points, true_values)
@@ -21,8 +36,13 @@ pass
 def featureVectorBuild(argv):
     global all_instances
     global tokensForFeatures
+    global contextDataList
+    global featureVectors
+    global featureVectorsIncremented
+    wordsToCheckAccumuleted = {}
     contextData = ""
-
+    ###############################################################################################################
+    #START - getting all words for BAG OF WORDS [variable - wordsToCheck]
     #content from line.data.TEST.xml
     etree = ET.parse(str(sys.argv[1]))
     root = etree.getroot()
@@ -32,6 +52,7 @@ def featureVectorBuild(argv):
             if child.tag == "context":
                 for everyChild in child.iter():
                     contextData += everyChild.text.replace("\n", "").replace("'", "").replace(",", "")+" "
+                    contextDataList.append(everyChild.text.replace("\n", "").replace("'", "").replace(",", ""))
 
     #content from line.data.TRAIN.xml
     etree = ET.parse(str(sys.argv[2]))
@@ -42,31 +63,46 @@ def featureVectorBuild(argv):
             if child.tag == "context":
                 for everyChild in child.iter():
                     contextData += everyChild.text.replace("\n", "").replace("'", "").replace(",", "")+" "
+                    contextDataList.append(everyChild.text.replace("\n", "").replace("'", "").replace(",", ""))
     #tokenization process
     tokensForFeatures=nltk.word_tokenize(contextData.strip())
     tokensForFeatures = nltk.FreqDist(tokensForFeatures)
+    wordsToCheck =  nltk.FreqDist(tokensForFeatures)
+    # all word that will be for check in feature vector
+    for element in wordsToCheck:
+        wordsToCheck[element] = 0
+    #END - getting all words for BAG OF WORDS
+    ##############################################################################################################
+
+    # building feature vector with wordsToCheck
+    for dataToCheck in contextDataList:
+                wordsToCheckTemp = wordsToCheck
+                dataToCheckList = split_and_remove_punctuations(dataToCheck)
+                for key, value in wordsToCheckTemp.items():
+                    for dataToken in dataToCheckList:
+                        if (key.strip().lower().replace('\'', '')) in (dataToken.strip().lower()):
+                            wordsToCheckTemp[key] = 1
+                    wordsToCheckAccumuleted[key] = dataToCheck.count(key)
+                featureVectorToAdd = deepcopy(wordsToCheckTemp)
+                featureVectorAccumuletedToAdd = deepcopy(wordsToCheckAccumuleted)
+                featureVectors.insert(len(featureVectors), featureVectorToAdd)
+                featureVectorsIncremented.insert(len(featureVectorsIncremented), featureVectorAccumuletedToAdd)
+                for element in wordsToCheckTemp:
+                    wordsToCheckTemp[element] = 0
 pass
 
 def feature_classification(argv):
     # build true values vector
-    true_values = ["beatles" for x in range(len(lyrics_by_artist_dic['beatles']))]
-    true_values.extend(["britney-spears" for x in range(len(lyrics_by_artist_dic['britney-spears']))])
+    true_values = ["line" for x in range(len(tokensForFeatures))]
 
-    # merge lyrics together
-    data = []
-    #data.extend(lyrics_by_artist_dic["beatles"])
-    #data.extend(lyrics_by_artist_dic["britney-spears"])
+    feature_vector = []
+    for index in range(len(tokensForFeatures)):
+        feature_vector.append([v for k, v in tokensForFeatures[index].items()])
 
-    #data = [var for var in data if var]
-
-    # apply CountVectonizer and tf-idf
-    count_vectorizer = CountVectorizer(stop_words=ENGLISH_STOP_WORDS, vocabulary=voc)
-    transformer = TfidfTransformer()
-    feature_vectors = transformer.fit_transform(count_vectorizer.fit_transform(data).toarray()).toarray()
 
     print("---------------------")
     print("Linear Regression:")
-    ClassifierLinearRegression(feature_vectors, true_values)
+    ClassifierLinearRegression(feature_vector, true_values)
     print("---------------------")
 pass
 
@@ -83,8 +119,8 @@ if __name__ == "__main__":
 
     # Question number 1
     featureVectorBuild(sys.argv)
-    feature_classification(sys.argv)
+    #feature_classification(sys.argv)
+    #bag_of_words(sys.argv)
 
     # Question number 2
     #loadEmbeddingsFile(sys.argv)
-
