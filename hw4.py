@@ -16,10 +16,9 @@ def ClassifierLinearRegression(data_points, true_values):
     trained_svc = LogisticRegression().fit(data_points, true_values)
     scores = cross_val_score(trained_svc, data_points, true_values, cv=10)
     print("accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
-
 pass
 
-def bag_of_words(argv, voc=None):
+def featureVectorBuild(argv):
     global all_instances
     global tokensForFeatures
     contextData = ""
@@ -30,11 +29,9 @@ def bag_of_words(argv, voc=None):
     instances = root.findall(".//instance")
     for element in instances:
         for child in element.iter():
-            #sub_tags = list(child.attrib)
-            #for tag in sub_tags:
             if child.tag == "context":
-                for sub_child in child.iter():
-                    contextData += sub_child.text.replace("\n", "").replace("'", "").replace(",", "")+" "
+                for everyChild in child.iter():
+                    contextData += everyChild.text.replace("\n", "").replace("'", "").replace(",", "")+" "
 
     #content from line.data.TRAIN.xml
     etree = ET.parse(str(sys.argv[2]))
@@ -42,16 +39,15 @@ def bag_of_words(argv, voc=None):
     instances = root.findall(".//instance")
     for element in instances:
         for child in element.iter():
-            #sub_tags = list(child.attrib)
-            #for tag in sub_tags:
             if child.tag == "context":
-                for sub_child in child.iter():
-                    contextData += sub_child.text.replace("\n", "").replace("'", "").replace(",", "")+" "
-
+                for everyChild in child.iter():
+                    contextData += everyChild.text.replace("\n", "").replace("'", "").replace(",", "")+" "
     #tokenization process
     tokensForFeatures=nltk.word_tokenize(contextData.strip())
     tokensForFeatures = nltk.FreqDist(tokensForFeatures)
+pass
 
+def feature_classification(argv):
     # build true values vector
     true_values = ["beatles" for x in range(len(lyrics_by_artist_dic['beatles']))]
     true_values.extend(["britney-spears" for x in range(len(lyrics_by_artist_dic['britney-spears']))])
@@ -86,7 +82,8 @@ if __name__ == "__main__":
                  '<input_file> <words_file_input_path> <best_words_file_output_path>')
 
     # Question number 1
-    bag_of_words(sys.argv)
+    featureVectorBuild(sys.argv)
+    feature_classification(sys.argv)
 
     # Question number 2
     #loadEmbeddingsFile(sys.argv)
