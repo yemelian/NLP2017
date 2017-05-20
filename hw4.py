@@ -40,6 +40,7 @@ def featureVectorBuild(argv):
     global featureVectors
     global featureVectorsIncremented
     wordsToCheckAccumuleted = {}
+    contextDataStringToAdd = ""
     contextData = ""
     ###############################################################################################################
     #START - getting all words for BAG OF WORDS [variable - wordsToCheck]
@@ -52,11 +53,13 @@ def featureVectorBuild(argv):
             if child.tag == "context":
                 for everyChild in child.iter():
                     contextData += everyChild.text.replace("\n", "").replace("'", "").replace(",", "")+" "
-                    tempStr=everyChild.text.replace("\n", " ")
-                    tempStr=tempStr.replace("\t", " ")
-                    tempStr = tempStr.rstrip()
-                    if tempStr != "":
-                        contextDataList.append(tempStr)
+                    contextDataStringToAdd+=everyChild.text.replace("\n", "").replace("'", "").replace(",", "")+" "
+                tempStr=contextDataStringToAdd
+                tempStr=tempStr.replace("\t", " ")
+                tempStr = tempStr.rstrip()
+                if tempStr.strip():
+                        contextDataList.append([tempStr])
+                contextDataStringToAdd=""
 
     #content from line.data.TRAIN.xml
     etree = ET.parse(str(sys.argv[2]))
@@ -67,11 +70,13 @@ def featureVectorBuild(argv):
             if child.tag == "context":
                 for everyChild in child.iter():
                     contextData += everyChild.text.replace("\n", "").replace("'", "").replace(",", "")+" "
-                    tempStr = everyChild.text.replace("\n", " ")
-                    tempStr = tempStr.replace("\t", " ")
-                    tempStr = tempStr.rstrip()
-                    if tempStr != "":
+                    contextDataStringToAdd += everyChild.text.replace("\n", "").replace("'", "").replace(",", "") + " "
+                tempStr=deepcopy(contextData)
+                tempStr = tempStr.replace("\t", " ")
+                tempStr = tempStr.rstrip()
+                if tempStr.strip():
                         contextDataList.append(tempStr)
+                contextDataStringToAdd = ""
     #tokenization process
     tokensForFeatures=nltk.word_tokenize(contextData.strip())
     tokensForFeatures = nltk.FreqDist(tokensForFeatures)
