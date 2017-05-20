@@ -34,7 +34,7 @@ def bag_of_words(argv, voc=None):
             #for tag in sub_tags:
             if child.tag == "context":
                 for sub_child in child.iter():
-                    contextData += sub_child.text + "\r\n"
+                    contextData += sub_child.text.replace("\n", "").replace("'", "").replace(",", "")+" "
 
     #content from line.data.TRAIN.xml
     etree = ET.parse(str(sys.argv[2]))
@@ -46,10 +46,11 @@ def bag_of_words(argv, voc=None):
             #for tag in sub_tags:
             if child.tag == "context":
                 for sub_child in child.iter():
-                    contextData += sub_child.text + "\r\n"
+                    contextData += sub_child.text.replace("\n", "").replace("'", "").replace(",", "")+" "
 
     #tokenization process
     tokensForFeatures=nltk.word_tokenize(contextData.strip())
+    tokensForFeatures = nltk.FreqDist(tokensForFeatures)
 
     # build true values vector
     true_values = ["beatles" for x in range(len(lyrics_by_artist_dic['beatles']))]
