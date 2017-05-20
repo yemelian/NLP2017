@@ -52,7 +52,11 @@ def featureVectorBuild(argv):
             if child.tag == "context":
                 for everyChild in child.iter():
                     contextData += everyChild.text.replace("\n", "").replace("'", "").replace(",", "")+" "
-                    contextDataList.append(everyChild.text.replace("\n", "").replace("'", "").replace(",", ""))
+                    tempStr=everyChild.text.replace("\n", " ")
+                    tempStr=tempStr.replace("\t", " ")
+                    tempStr = tempStr.rstrip()
+                    if tempStr != "":
+                        contextDataList.append(tempStr)
 
     #content from line.data.TRAIN.xml
     etree = ET.parse(str(sys.argv[2]))
@@ -63,7 +67,11 @@ def featureVectorBuild(argv):
             if child.tag == "context":
                 for everyChild in child.iter():
                     contextData += everyChild.text.replace("\n", "").replace("'", "").replace(",", "")+" "
-                    contextDataList.append(everyChild.text.replace("\n", "").replace("'", "").replace(",", ""))
+                    tempStr = everyChild.text.replace("\n", " ")
+                    tempStr = tempStr.replace("\t", " ")
+                    tempStr = tempStr.rstrip()
+                    if tempStr != "":
+                        contextDataList.append(tempStr)
     #tokenization process
     tokensForFeatures=nltk.word_tokenize(contextData.strip())
     tokensForFeatures = nltk.FreqDist(tokensForFeatures)
@@ -75,20 +83,20 @@ def featureVectorBuild(argv):
     ##############################################################################################################
 
     # building feature vector with wordsToCheck
+    wordsToCheckTemp = wordsToCheck
     for dataToCheck in contextDataList:
-                wordsToCheckTemp = wordsToCheck
                 dataToCheckList = split_and_remove_punctuations(dataToCheck)
+                for element in wordsToCheckTemp:
+                    wordsToCheckTemp[element] = 0
                 for key, value in wordsToCheckTemp.items():
                     for dataToken in dataToCheckList:
                         if (key.strip().lower().replace('\'', '')) in (dataToken.strip().lower()):
                             wordsToCheckTemp[key] = 1
-                    wordsToCheckAccumuleted[key] = dataToCheck.count(key)
+                   #wordsToCheckAccumuleted[key] = dataToCheck.count(key)
                 featureVectorToAdd = deepcopy(wordsToCheckTemp)
-                featureVectorAccumuletedToAdd = deepcopy(wordsToCheckAccumuleted)
                 featureVectors.insert(len(featureVectors), featureVectorToAdd)
-                featureVectorsIncremented.insert(len(featureVectorsIncremented), featureVectorAccumuletedToAdd)
-                for element in wordsToCheckTemp:
-                    wordsToCheckTemp[element] = 0
+               #featureVectorAccumuletedToAdd = deepcopy(wordsToCheckAccumuleted)
+               #featureVectorsIncremented.insert(len(featureVectorsIncremented), featureVectorAccumuletedToAdd)
 pass
 
 def feature_classification(argv):
