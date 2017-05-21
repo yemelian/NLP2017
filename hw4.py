@@ -18,13 +18,16 @@ featureVectors = []
 featureVectorsIncremented = []
 
 def split_and_remove_punctuations(lyrics):
+    lyrcisToProcess = str(lyrics).split()
+    processedLyrics=""
 
-    lyrics = lyrics.split()
+    for i in range(len(lyrcisToProcess)):
+        lyrcisToProcess[i] = lyrcisToProcess[i].strip(string.punctuation)
 
-    for i in range(len(lyrics)):
-        lyrics[i] = lyrics[i].strip(string.punctuation)
+    for i in range(len(lyrcisToProcess)):
+        processedLyrics=processedLyrics+str(lyrcisToProcess[i]).replace("'", "").replace(",", "")+" "
 
-    return lyrics
+    return processedLyrics
 pass
 
 def ClassifierLinearRegression(data_points, true_values):
@@ -39,7 +42,7 @@ def featureVectorBuild(argv):
     global contextDataList
     global featureVectors
     global featureVectorsIncremented
-    wordsToCheckAccumuleted = {}
+   #wordsToCheckAccumuleted = {}
     contextDataStringToAdd = ""
     contextData = ""
     ###############################################################################################################
