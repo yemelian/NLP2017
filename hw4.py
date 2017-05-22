@@ -109,11 +109,11 @@ pass
 
 def feature_classification(argv):
     # build true values vector
-    true_values = ["line" for x in range(len(tokensForFeatures))]
+    true_values = ["line" for x in range(len(featureVectors))]
 
     feature_vector = []
-    for index in range(len(tokensForFeatures)):
-        feature_vector.append([v for k, v in tokensForFeatures[index].items()])
+    for index in range(len(featureVectors)):
+        feature_vector.append([v for k, v in featureVectors[index].items()])
 
 
     print("---------------------")
@@ -135,8 +135,9 @@ if __name__ == "__main__":
 
     # Question number 1
     featureVectorBuild(sys.argv)
-    #feature_classification(sys.argv)
+    feature_classification(sys.argv)
     #bag_of_words(sys.argv)
 
     # Question number 2
     #loadEmbeddingsFile(sys.argv)
+
