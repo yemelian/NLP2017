@@ -1,19 +1,7 @@
 import os
 import sys
-import nltk
 import string
 import numpy
-from sklearn.metrics import accuracy_score, f1_score
-from sklearn.linear_model import LogisticRegression
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.model_selection import cross_val_score
-from sklearn import svm, neighbors, tree, naive_bayes
-from xml.etree import ElementTree
-from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer, ENGLISH_STOP_WORDS
-from sklearn.feature_selection import SelectKBest
-from sklearn.feature_extraction.text import TfidfVectorizer, TfidfTransformer
-from gensim import models
-from sklearn.preprocessing import MaxAbsScaler
 
 grammarList={}
 
@@ -33,6 +21,13 @@ def getGrammar(argv):
      grammarFileData.close()
 pass
 
+## Getting Sentence from file to check
+def checkSentence(sentenceToCheck):
+
+
+ print(sentenceToCheck)
+pass
+
 
 if __name__ == "__main__":
 
@@ -43,6 +38,10 @@ if __name__ == "__main__":
     grammar=getGrammar(sys.argv)
 
 
+    with open(sys.argv[2], "r") as sentencesToCheck:
+     for sentence in sentencesToCheck.readlines():
+        checkSentence(sentence)
+     sentencesToCheck.close()
 
 
 
